@@ -93,17 +93,17 @@ class _BovinoPageState extends State<BovinoPage> {
         MaterialPageRoute(
             builder: (context) => BovinoForm(
                   bovino: bovino,
-              usuario_id: widget.usuario_id,
+              token: widget.token,
                 )));
     if (recBovino != null) {
       if (bovino != null) {
         await api.atualizarBovino(recBovino, widget.usuario_id, widget.token);
-        //print(widget.usuario_id);
-        //print(recBovino);
+       // print(widget.usuario_id);
+        print(recBovino);
       } else {
         await api.cadastroBovino(recBovino, widget.usuario_id, widget.token);
         //print(widget.usuario_id);
-       //print(recBovino);
+       print(recBovino);
       }
       _getAllBovinos();
     }
@@ -187,6 +187,7 @@ class _BovinoPageState extends State<BovinoPage> {
               ))
         ],
       ),
+
       onPressed: () {
         Navigator.pop(context);
         _showContactPage(bovino: bovino[index]);

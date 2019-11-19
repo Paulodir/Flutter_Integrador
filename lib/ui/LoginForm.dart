@@ -10,8 +10,7 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-  // f45d27
-  // f5851f
+
   LoginHelper helper = LoginHelper();
   Dialogs dialog = new Dialogs();
   Api api = new Api();
@@ -94,12 +93,11 @@ class _LoginFormState extends State<LoginForm> {
                                 color: Colors.grey,
                               ),
                             ),
-
                               focusNode: _nomeFocus,
                               controller: _nomeController,
                               validator: (value) {
                                 if (value.isEmpty) {
-                                  return 'Digite seu nome';
+                                  return 'É Obrigatório Informar Seu Nome!';
                                 }
                                 return null;
                               }),

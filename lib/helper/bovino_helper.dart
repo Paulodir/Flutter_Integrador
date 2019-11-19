@@ -16,7 +16,33 @@ class BovinoHelper {
     dbBovino.close();
   }
 }
+class Raca{
+  dynamic id;
+  String nome;
 
+
+  Raca({this.id, this.nome});
+
+  factory Raca.fromJson(Map<String, dynamic> json) {
+    return Raca(
+      id: json['id'],
+      nome: json['nome'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['nome'] = this.nome;
+    return data;
+  }
+
+  @override
+  String toString() {
+    return "Raca(id: $id, nome: $nome)";
+  }
+
+}
 class Bovino {
   dynamic id;
   String raca_id;

@@ -61,7 +61,18 @@ class Api {
       List<Bovino> bovinos = json.decode(response.body).map<Bovino>((map) {
         return Bovino.fromJson(map);
       }).toList();
+      //print(bovinos);
       return bovinos;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List> racas(String token) async {
+    http.Response response = await http.get(BASE_URL + 'Raca',
+        headers: {'token': token, 'Content-Type': 'application/json'});
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
     } else {
       return null;
     }

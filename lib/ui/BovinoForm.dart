@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../helper/bovino_helper.dart';
+import '../helper/Api.dart';
+
 
 class BovinoForm extends StatefulWidget {
   final Bovino bovino;
+  final Raca raca;
   final usuario_id;
+  final token;
 
-  BovinoForm({this.bovino, this.usuario_id});
+  BovinoForm({this.bovino, this.usuario_id, this.raca, this.token});
 
   @override
   _BovinoFormState createState() => _BovinoFormState();
@@ -24,13 +28,45 @@ class _BovinoFormState extends State<BovinoForm> {
   final _formBovino = GlobalKey<FormState>();
 
   Bovino _editedBovino;
+  Raca _editedRaca;
   bool _userEdited = false;
+  String _mySelection;
+  Future<List> racasGet;
+
+  void getRacas(){
+    Api api = new Api();
+    racasGet = api.racas(widget.token);
+    racasGet .then((values) {
+      setState(() {
+        racas= values;
+      });
+     });
+  }
+
+
+List racas=List();
+
+//  Future<String> getRaca() async {
+//    var res = await http.get(Uri.encodeFull("http://paulodir.site/rest/Raca"),
+//        headers: {'token': 'acesso', "Accept": "application/json"});
+//    var resBody = json.decode(res.body);
+//
+//    setState(() {
+//      data = resBody;
+//    });
+//
+//    //print(resBody);
+//
+//    return "Sucess";
+//  }
 
   @override
   void initState() {
     super.initState();
+    getRacas();
     if (widget.bovino == null) {
       _editedBovino = Bovino();
+      _editedRaca = Raca();
 
     } else {
       _editedBovino = Bovino.fromJson(widget.bovino.toJson());
@@ -69,7 +105,28 @@ class _BovinoFormState extends State<BovinoForm> {
                 key: _formBovino,
                 child: Column(
                   children: <Widget>[
-                    TextFormField(
+                    DropdownButton(
+                      items: racas.map((item) {
+                        print('dentro do dropdwon');
+                        print(racas);
+
+
+                        return new DropdownMenuItem(
+                          child: new Text(item['nome']),
+                          value: item['id'].toString(),
+                        );
+                      }).toList(),
+                      onChanged: (newVal) {
+                        setState(() {
+                          _mySelection = newVal;
+                          //print(_mySelection);
+                          _editedBovino.raca_id= newVal;
+                        });
+                      },
+
+                      value: _mySelection,
+                    ),
+                   /* TextFormField(
                         decoration: InputDecoration(labelText: "Raça"),
                         onChanged: (text) {
                           _userEdited = true;
@@ -81,7 +138,7 @@ class _BovinoFormState extends State<BovinoForm> {
                             return 'Digite a Raça do seu bovino';
                           }
                           return null;
-                        }),
+                        }),*/
                     TextFormField(
                         decoration: InputDecoration(labelText: "Nome"),
                         focusNode: _nomeFocus,

@@ -1,70 +1,52 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../helper/bovino_helper.dart';
-import '../helper/Api.dart';
+import '../helper/ordenha_helper.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 
-class BovinoForm extends StatefulWidget {
-  final Bovino bovino;
-  final Raca raca;
+class OrdenhaForm extends StatefulWidget {
+  final Ordenha ordenha;
   final usuario_id;
   final token;
 
 
-  BovinoForm({this.bovino, this.usuario_id, this.raca, this.token});
+  OrdenhaForm({this.ordenha, this.usuario_id,this.token});
 
   @override
-  _BovinoFormState createState() => _BovinoFormState();
+  _OrdenhaFormState createState() => _OrdenhaFormState();
 }
 
-class _BovinoFormState extends State<BovinoForm> {
-  final _raca_idController = TextEditingController();
-  final _brincoController = TextEditingController();
-  final _nomeController = TextEditingController();
-  final _nascimentoController = TextEditingController();
+class _OrdenhaFormState extends State<OrdenhaForm> {
+  final _bovino_idController = TextEditingController();
+  final _leiteController = TextEditingController();
+  final _descarteController = TextEditingController();
+  final _coletaController = TextEditingController();
   final _pesoController = TextEditingController();
-  final _nomeFocus = FocusNode();
+  final _descarteFocus = FocusNode();
 
 
-  final _formBovino = GlobalKey<FormState>();
+  final _formOrdenha = GlobalKey<FormState>();
   final formatoData = new DateFormat("yyyy-MM-dd");
 
-  Bovino _editedBovino;
-  Raca _editedRaca;
+  Ordenha _editedOrdenha;
   bool _userEdited = false;
   String _mySelection;
-  Future<List> racasGet;
-  List racas = List();
   String dataSelecionada='';
 
 
-  void getRacas() {
-    Api api = new Api();
-    racasGet = api.racas(widget.token);
-    racasGet.then((values) {
-      setState(() {
-        racas = values;
-        print(racas);
-      });
-    });
-  }
+
 
   @override
   void initState() {
     super.initState();
-    getRacas();
-    if (widget.bovino == null) {
-      _editedBovino = Bovino();
-      _editedRaca = Raca();
+    if (widget.ordenha == null) {
+      _editedOrdenha = Ordenha();
     } else {
-      _editedBovino = Bovino.fromJson(widget.bovino.toJson());
-      _raca_idController.text = _editedBovino.raca_id;
-      _brincoController.text = _editedBovino.brinco;
-      _nomeController.text = _editedBovino.nome;
-      _nascimentoController.text = _editedBovino.nascimento;
-      _pesoController.text = _editedBovino.peso;
-      _editedBovino.usuario_id = widget.usuario_id;
+      _editedOrdenha = Ordenha.fromJson(widget.ordenha.toJson());
+      _bovino_idController.text = _editedOrdenha.bovino_id;
+      _leiteController.text = _editedOrdenha.leite;
+      _descarteController.text = _editedOrdenha.descarte;
+      _coletaController.text = _editedOrdenha.coleta;
     }
   }
 
@@ -75,58 +57,58 @@ class _BovinoFormState extends State<BovinoForm> {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.deepOrange,
-            title: Text(_editedBovino.nome ?? 'Novo bovino'),
+            title: Text(_editedOrdenha.descarte ?? 'Novo ordenha'),
             centerTitle: true,
           ),
           floatingActionButton: FloatingActionButton(
               child: Icon(Icons.save),
               backgroundColor: Colors.deepOrange,
               onPressed: () {
-
-                if (_formBovino.currentState.validate()) {
-                  Navigator.pop(context, _editedBovino);
+                print('dentro do save $_editedOrdenha');
+                if (_formOrdenha.currentState.validate()) {
+                  Navigator.pop(context, _editedOrdenha);
                 }
               }),
           body: SingleChildScrollView(
               padding: EdgeInsets.all(10.0),
               child: Form(
-                key: _formBovino,
+                key: _formOrdenha,
                 child: Column(
                   children: <Widget>[
-                    DropdownButton(
-                      items: racas.map((item) {
-                        // print('dentro do dropdwon');
-                        //print(racas);
-                        return new DropdownMenuItem(
-                          child: new Text(item['nome']),
-                          value: item['id'].toString(),
-                        );
-                      }).toList(),
-                      onChanged: (novoValor) {
-                        setState(() {
-                          _mySelection = novoValor;
-                          //print(_mySelection);
-                          _editedBovino.raca_id = novoValor;
-                        });
-                      },
-                      isExpanded: true,
-                      value: _editedBovino.raca_id,
-                      hint: Text(
-                        'Selecione a Raça do Animal',
-                        style: TextStyle(color: Colors.deepOrange),
-                      ),
-                    ),
+//                    DropdownButton(
+//                      items: racas.map((item) {
+//                        // print('dentro do dropdwon');
+//                        //print(racas);
+//                        return new DropdownMenuItem(
+//                          child: new Text(item['descarte']),
+//                          value: item['id'].toString(),
+//                        );
+//                      }).toList(),
+//                      onChanged: (novoValor) {
+//                        setState(() {
+//                          _mySelection = novoValor;
+//                          //print(_mySelection);
+//                          _editedOrdenha.bovino_id = novoValor;
+//                        });
+//                      },
+//                      isExpanded: true,
+//                      value: _editedOrdenha.bovino_id,
+//                      hint: Text(
+//                        'Selecione a Raça do Animal',
+//                        style: TextStyle(color: Colors.deepOrange),
+//                      ),
+//                    ),
                     TextFormField(
                         decoration: InputDecoration(labelText: "Nome"),
-                        focusNode: _nomeFocus,
+                        focusNode: _descarteFocus,
                         onChanged: (text) {
                       _userEdited = true;
-                      _editedBovino.nome = text;
+                      _editedOrdenha.descarte = text;
                     },
-                        controller: _nomeController,
+                        controller: _descarteController,
                         validator: (value) {
                           if (value.isEmpty) {
-                            return 'Digite o nome do seu Bovino';
+                            return 'Digite o descarte do seu Ordenha';
                           }
                           return null;
                         }),
@@ -134,10 +116,10 @@ class _BovinoFormState extends State<BovinoForm> {
                         decoration: InputDecoration(labelText: "Nº do Brinco"),
 
                         keyboardType: TextInputType.number,
-                        controller: _brincoController,
+                        controller: _leiteController,
                         validator: (value) {
                           if (value.isEmpty) {
-                            return 'Digite o brinco do seu bovino';
+                            return 'Digite o leite do seu ordenha';
                           }
                           return null;
                         }),
@@ -159,7 +141,7 @@ class _BovinoFormState extends State<BovinoForm> {
                               onConfirm: (date) {
                                 //print(new DateFormat("dd-MM-yyyy").format(date));
                                 dataSelecionada= formatoData.format(date);
-                                _nascimentoController.text=dataSelecionada;
+                                _coletaController.text=dataSelecionada;
                                 print('Data enviada $date');
                               },
                               currentTime: DateTime.now(),
@@ -172,27 +154,13 @@ class _BovinoFormState extends State<BovinoForm> {
                     TextFormField(
                         decoration:
                             InputDecoration(),
-                        controller: _nascimentoController,
+                        controller: _coletaController,
                         validator: (dataSelecionada) {
                           if (dataSelecionada.isEmpty) {
                             return 'É nescessário selecinar a Data de Nascimento';
                           }
                           return null;
                         }),
-                    TextFormField(
-                        decoration: InputDecoration(labelText: "Peso"),
-                        onChanged: (text) {
-                          _userEdited = true;
-                          _editedBovino.peso = text;
-                        },
-                        controller: _pesoController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Digite o Peso do seu Bovino';
-                          }
-                          return null;
-                        }),
-
 //                    FlatButton(
 //                        onTap() {
 //                    DatePicker.showDatePicker(context,

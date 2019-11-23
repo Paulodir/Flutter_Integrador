@@ -12,10 +12,11 @@ class LoginHelper {
 
   Databases databases = new Databases();
 
-  Future<bool> saveLogado(int login_id, String tokens) async {
+  Future<bool> saveLogado(int login_id, String nome, String tokens) async {
     Database dbLogado = await databases.db;
     Logado logado = new Logado();
     logado.id = 1;
+    logado.nome = nome;
     logado.logado_login_id = login_id;
     logado.token = tokens;
     //print("id");print(logado.id);
@@ -34,6 +35,16 @@ class LoginHelper {
     if (maps.length > 0) {
       Logado usuariologado = Logado.fromMap(maps.first);
       return usuariologado.logado_login_id;
+    } else {
+      return null;
+    }
+  }
+  Future<String> getLogadoNome() async {
+    Database dbLogado = await databases.db;
+    List<Map> maps = await dbLogado.rawQuery("SELECT * FROM $logadoTable");
+    if (maps.length > 0) {
+      Logado usuariologado = Logado.fromMap(maps.first);
+      return usuariologado.nome;
     } else {
       return null;
     }
@@ -64,6 +75,7 @@ class LoginHelper {
 
 class Logado {
   int id;
+  String nome;
   int logado_login_id;
   String token;
 
@@ -71,6 +83,7 @@ class Logado {
 
   Logado.fromMap(Map map) {
     id = map[idLogadoColumn];
+    nome = map[nomeLogadoColumn];
     logado_login_id = map[login_idLogadoColumn];
     token = map[tokenColumn];
   }
@@ -78,6 +91,7 @@ class Logado {
   Map toMap() {
     Map<String, dynamic> map = {
       idLoginColumn: id,
+      nomeLogadoColumn: nome,
       login_idLogadoColumn: logado_login_id,
       tokenColumn: token
     };

@@ -36,7 +36,7 @@ class _LoginFormState extends State<LoginForm> {
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [Color(0xFFf45d27), Color(0xFFf5851f)],
+                          colors: [Colors.deepOrange, Colors.orange],
                         ),
                         borderRadius:
                             BorderRadius.only(bottomLeft: Radius.circular(90))),
@@ -175,10 +175,7 @@ class _LoginFormState extends State<LoginForm> {
                                       MediaQuery.of(context).size.width / 1.2,
                                   decoration: BoxDecoration(
                                       gradient: LinearGradient(
-                                        colors: [
-                                          Color(0xFFf45d27),
-                                          Color(0xFFf5851f)
-                                        ],
+                                        colors: [Colors.deepOrange, Colors.orange],
                                       ),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(50))),
@@ -204,7 +201,7 @@ class _LoginFormState extends State<LoginForm> {
                                       _emailController.text, _senhaController.text);
                                   Navigator.pop(context);
                                   if (user != null) {
-                                    helper.saveLogado(user.id, user.token);
+                                    helper.saveLogado(user.id, user.nome, user.token);
                                     Navigator.pop(context);
                                     await Navigator.push(
                                         context,

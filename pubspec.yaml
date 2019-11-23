@@ -26,6 +26,8 @@ dependencies:
   url_launcher: ^5.1.3
   sqflite: any
   http: any
+  flutter_datetime_picker: ^1.2.8
+  intl: ^0.16.0
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +50,7 @@ flutter:
      - images/ic_launcher.png
      - images/rural.jpg
      - images/produtor.png
+     - images/bovino.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

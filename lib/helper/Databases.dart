@@ -17,12 +17,12 @@ class Databases {
 
   Future<Database> initDb() async {
     final databasesPath = await getDatabasesPath();
-    final path = join(databasesPath, "nct.db");
+    final path = join(databasesPath, "ppt.db");
 
     return await openDatabase(path, version: 1,
         onCreate: (Database db, int newerVersion) async {
       await db.execute(
-          "CREATE TABLE $logadoTable ($idLogadoColumn INTEGER PRIMARY KEY AUTOINCREMENT,$login_idLogadoColumn INT, $tokenColumn TEXT);");
+          "CREATE TABLE $logadoTable ($idLogadoColumn INTEGER PRIMARY KEY AUTOINCREMENT, $nomeLogadoColumn VARCHAR, $login_idLogadoColumn INT, $tokenColumn TEXT);");
     });
   }
 }

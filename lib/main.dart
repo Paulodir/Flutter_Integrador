@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_integrador/ui/BovinoPage.dart';
+import 'package:flutter_integrador/ui/HomePage.dart';
 import 'package:flutter_integrador/helper/login_helper.dart';
 import 'package:flutter_integrador/ui/LoginPage.dart';
 
@@ -15,7 +15,7 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
   runApp(MaterialApp(
-    home: (logado != null) ? BovinoPage(logado, usuario_id) : LoginPage(),
+    home: (logado != null) ? HomePage() : LoginPage(),
 
     debugShowCheckedModeBanner: false,
   ));

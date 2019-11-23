@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../helper/login_helper.dart';
-import 'BovinoPage.dart';
+import 'HomePage.dart';
 import '../utils/Dialogs.dart';
 import '../ui/LoginForm.dart';
 import '../helper/Api.dart';
@@ -16,8 +16,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // f45d27
-  // f5851f
   LoginHelper helper = LoginHelper();
   List<Login> login = List();
   Dialogs dialog = new Dialogs();
@@ -33,7 +31,6 @@ class _LoginPageState extends State<LoginPage> {
     SystemChrome.setEnabledSystemUIOverlays([]);
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [Color(0xFFf45d27), Color(0xFFf5851f)],
+                          colors: [Colors.deepOrange, Colors.orange],
                         ),
                         borderRadius:
                             BorderRadius.only(bottomLeft: Radius.circular(90))),
@@ -60,7 +57,6 @@ class _LoginPageState extends State<LoginPage> {
                       children: <Widget>[
                         Spacer(),
                         Image.asset('images/produtor.png'),
-
                         Spacer(),
                         Align(
                           alignment: Alignment.bottomRight,
@@ -107,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                             focusNode: _emaiLFocus,
                             keyboardType: TextInputType.emailAddress,
                             controller: _emailController,
-                              /*validator: (value) {
+                            /*validator: (value) {
                                 if (value.isEmpty) {
                                   return 'Digite seu email';
                                 }
@@ -167,12 +163,10 @@ class _LoginPageState extends State<LoginPage> {
                                   width:
                                       MediaQuery.of(context).size.width / 1.2,
                                   decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Color(0xFFf45d27),
-                                          Color(0xFFf5851f)
-                                        ],
-                                      ),
+                                      gradient: LinearGradient(colors: [
+                                        Colors.deepOrange,
+                                        Colors.orange
+                                      ]),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(50))),
                                   child: Center(
@@ -192,13 +186,16 @@ class _LoginPageState extends State<LoginPage> {
                                     _emailController.text,
                                     _senhaController.text);
                                 if (user != null) {
-                                  helper.saveLogado(user.id, user.token);
+                                  helper.saveLogado(
+                                      user.id, user.nome, user.token);
                                   Navigator.pop(context);
                                   await Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              BovinoPage(user.token, user.id)));
+                                        builder: (context) => HomePage(
+                                            //user.token, user.id
+                                            ),
+                                      ));
                                 } else {
                                   dialog.showAlertDialog(
                                       context, 'Aviso', 'Login Inválido');
@@ -226,12 +223,10 @@ class _LoginPageState extends State<LoginPage> {
                                   width:
                                       MediaQuery.of(context).size.width / 1.2,
                                   decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Color(0xFFf45d27),
-                                          Color(0xFFf5851f)
-                                        ],
-                                      ),
+                                      gradient: LinearGradient(colors: [
+                                        Colors.deepOrange,
+                                        Colors.orange
+                                      ]),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(50))),
                                   child: Center(

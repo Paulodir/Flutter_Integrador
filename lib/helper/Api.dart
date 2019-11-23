@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'login_helper.dart';
 import 'bovino_helper.dart';
+import 'ordenha_helper.dart';
 
 const BASE_URL = "http://paulodir.site/rest/";
 
@@ -72,6 +73,8 @@ class Api {
     http.Response response = await http.get(BASE_URL + 'Raca',
         headers: {'token': token, 'Content-Type': 'application/json'});
     if (response.statusCode == 200) {
+      //print("deentro api");
+      //print(json.decode(response.body));
       return json.decode(response.body);
     } else {
       return null;
@@ -101,6 +104,65 @@ class Api {
   Future<bool> deletarBovino(String codigoBovino, String token) async {
     http.Response response = await http.delete(
         BASE_URL + "Bovino/" + codigoBovino,
+        headers: {'token': token, 'Content-Type': 'application/json'});
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  Future<List<Ordenha>> ordenhas(String token) async {
+    http.Response response = await http.get(BASE_URL + 'Ordenha',
+        headers: {'token': token, 'Content-Type': 'application/json'});
+    if (response.statusCode == 200) {
+      List<Ordenha> ordenhas = json.decode(response.body).map<Ordenha>((map) {
+        return Ordenha.fromJson(map);
+      }).toList();
+      //print(ordenhas);
+      return ordenhas;
+    } else {
+      return null;
+    }
+  }
+  Future<Ordenha> cadastroOrdenha(
+      Ordenha ordenha, int usuario_id, String token) async {
+    http.Response response = await http.post(BASE_URL + "Ordenha",
+        body: jsonEncode({
+          "bovino_id": ordenha.bovino_id,
+          "leite": ordenha.leite,
+          "descarte": ordenha.descarte,
+          "coleta": ordenha.coleta
+        }),
+        headers: {'token': token, 'Content-Type': 'application/json'});
+    if (response.statusCode == 200) {
+      Ordenha dadosJson = new Ordenha.fromJson(json.decode(response.body));
+      return dadosJson;
+    } else {
+      return null;
+    }
+  }
+
+  Future<Ordenha> atualizarOrdenha(
+      Ordenha ordenha, int usuario_id, String token) async {
+    http.Response response = await http.put(BASE_URL + "Ordenha/" + ordenha.id,
+        body: jsonEncode({
+          "bovino_id": ordenha.bovino_id,
+          "leite": ordenha.leite,
+          "descarte": ordenha.descarte,
+          "coleta": ordenha.coleta
+        }),
+        headers: {'token': token, 'Content-Type': 'application/json'});
+    if (response.statusCode == 200) {
+      //print(response.body);
+      return new Ordenha.fromJson(json.decode(response.body));
+    } else {
+      return null;
+    }
+  }
+
+  Future<bool> deletarOrdenha(String codigoOrdenha, String token) async {
+    http.Response response = await http.delete(
+        BASE_URL + "Ordenha/" + codigoOrdenha,
         headers: {'token': token, 'Content-Type': 'application/json'});
     if (response.statusCode == 200) {
       return true;

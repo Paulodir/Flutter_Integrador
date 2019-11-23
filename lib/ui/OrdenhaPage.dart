@@ -1,30 +1,26 @@
 import 'package:flutter/material.dart';
-import 'BovinoForm.dart';
+import 'OrdenhaForm.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../helper/bovino_helper.dart';
-import '../helper/login_helper.dart';
+import '../helper/ordenha_helper.dart';
 import '../utils/Dialogs.dart';
 import 'package:flutter_integrador/ui/Menu.dart';
 import '../helper/Api.dart';
 
-class BovinoPage extends StatefulWidget {
+class OrdenhaPage extends StatefulWidget {
   final String token;
   final int usuario_id;
 
-  BovinoPage(this.token, this.usuario_id);
-
+  OrdenhaPage(this.token, this.usuario_id);
 
   @override
-  _BovinoPageState createState() => _BovinoPageState();
+  _OrdenhaPageState createState() => _OrdenhaPageState();
 }
 
-//enum OrderOptions { orderaz, orderza, sair }
-
-class _BovinoPageState extends State<BovinoPage> {
+class _OrdenhaPageState extends State<OrdenhaPage> {
   Dialogs dialog = new Dialogs();
- // LoginHelper helperLog = LoginHelper();
-  BovinoHelper helper = BovinoHelper();
-  List<Bovino> bovino = List();
+  // LoginHelper helperLog = LoginHelper();
+  OrdenhaHelper helper = OrdenhaHelper();
+  List<Ordenha> ordenha = List();
   Api api = new Api();
 
   var isLoading = false;
@@ -33,13 +29,14 @@ class _BovinoPageState extends State<BovinoPage> {
   void initState() {
     super.initState();
     isLoading = true;
-    _getAllBovinos();
+    _getAllOrdenhas();
   }
-  _getAllBovinos() async {
-    api.bovinos(widget.token).then((list) {
+
+  _getAllOrdenhas() async {
+    api.ordenhas(widget.token).then((list) {
       setState(() {
         isLoading = false;
-        bovino = list;
+        ordenha = list;
       });
     });
   }
@@ -49,7 +46,7 @@ class _BovinoPageState extends State<BovinoPage> {
     return Scaffold(
         drawer: Menu(),
         appBar: AppBar(
-          title: Text('Bovinos'),
+          title: Text('Ordenhas'),
           backgroundColor: Colors.deepOrange,
           centerTitle: true,
 //          actions: <Widget>[
@@ -87,46 +84,46 @@ class _BovinoPageState extends State<BovinoPage> {
                   )
                 : ListView.builder(
                     padding: EdgeInsets.all(10.0),
-                    itemCount: bovino.length,
+                    itemCount: ordenha.length,
                     itemBuilder: (context, index) {
-                      return _bovinoCard(context, index);
+                      return _ordenhaCard(context, index);
                     }),
             onWillPop: () {
               return null;
             }));
   }
 
-  void _showContactPage({Bovino bovino}) async {
-    final recBovino = await Navigator.push(
+  void _showContactPage({Ordenha ordenha}) async {
+    final recOrdenha = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => BovinoForm(
-                  bovino: bovino,
-              token: widget.token,
+            builder: (context) => OrdenhaForm(
+                  ordenha: ordenha,
+                  //token: widget.token,
                 )));
-    if (recBovino != null) {
-      if (bovino != null) {
-        await api.atualizarBovino(recBovino, widget.usuario_id, widget.token);
-       // print(widget.usuario_id);
-        print(recBovino);
+    if (recOrdenha != null) {
+      if (ordenha != null) {
+        await api.atualizarOrdenha(recOrdenha, widget.usuario_id, widget.token);
+        // print(widget.usuario_id);
+        print(recOrdenha);
       } else {
-        await api.cadastroBovino(recBovino, widget.usuario_id, widget.token);
+        await api.cadastroOrdenha(recOrdenha, widget.usuario_id, widget.token);
         //print(widget.usuario_id);
-       print(recBovino);
+        print(recOrdenha);
       }
-      _getAllBovinos();
+      _getAllOrdenhas();
     }
   }
 
-  Widget _bovinoCard(BuildContext context, int index) {
+  Widget _ordenhaCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
         child: Padding(
             padding: EdgeInsets.all(10.0),
             child: ListTile(
-              title: Text('Nome: ' + bovino[index].nome),
-              subtitle: Text('Nº Brinco: ' + bovino[index].brinco),
-              trailing: Text(bovino[index].nascimento),
+              title: Text('Nome: ' + ordenha[index].bovino_id),
+              subtitle: Text('Nº Brinco: ' + ordenha[index].leite),
+              trailing: Text(ordenha[index].coleta),
             )),
       ),
       onTap: () {
@@ -134,28 +131,6 @@ class _BovinoPageState extends State<BovinoPage> {
       },
     );
   }
-
-//  void _orderList(OrderOptions result) async {
-//    switch (result) {
-//      case OrderOptions.orderaz:
-//        bovino.sort((a, b) {
-//          return a.nome.toLowerCase().compareTo(b.nome.toLowerCase());
-//        });
-//        break;
-//      case OrderOptions.orderza:
-//        bovino.sort((a, b) {
-//          return b.nome.toLowerCase().compareTo(a.nome.toLowerCase());
-//        });
-//        break;
-//      case OrderOptions.sair:
-//        await helperLog.deleteLogado();
-//        Navigator.pop(context);
-//        await Navigator.push(
-//            context, MaterialPageRoute(builder: (context) => LoginPage()));
-//        break;
-//    }
-//    setState(() {});
-//  }
 
   void _showOptions(BuildContext context, int index) {
     List<Widget> botoes = [];
@@ -168,17 +143,16 @@ class _BovinoPageState extends State<BovinoPage> {
               child: Column(
                 children: <Widget>[
                   Text(
-                    'Atualizar Informações',
+                    'Modificar',
                     style: TextStyle(color: Colors.deepOrange, fontSize: 15.0),
                   )
                 ],
               ))
         ],
       ),
-
       onPressed: () {
         Navigator.pop(context);
-        _showContactPage(bovino: bovino[index]);
+        _showContactPage(ordenha: ordenha[index]);
       },
     ));
     botoes.add(FlatButton(
@@ -190,7 +164,7 @@ class _BovinoPageState extends State<BovinoPage> {
               child: Column(
                 children: <Widget>[
                   Text(
-                    'Apagar Registro',
+                    'Apagar',
                     style: TextStyle(color: Colors.deepOrange, fontSize: 15.0),
                   )
                 ],
@@ -198,15 +172,13 @@ class _BovinoPageState extends State<BovinoPage> {
         ],
       ),
       onPressed: () {
-        api.deletarBovino(bovino[index].id, widget.token);
+        api.deletarOrdenha(ordenha[index].id, widget.token);
         setState(() {
-          bovino.removeAt(index);
+          ordenha.removeAt(index);
           Navigator.pop(context);
         });
       },
     ));
     dialog.showBottomOptions(context, botoes);
   }
-
-
 }

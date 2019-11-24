@@ -1,34 +1,30 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../helper/ordenha_helper.dart';
+import '../helper/inseminacao_helper.dart';
 import '../helper/bovino_helper.dart';
 import '../helper/Api.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 
-class OrdenhaForm extends StatefulWidget {
-  final Ordenha ordenha;
+class InseminacaoForm extends StatefulWidget {
+  final Inseminacao inseminacao;
   final token;
 
-  OrdenhaForm({this.ordenha, this.token});
+  InseminacaoForm({this.inseminacao, this.token});
 
   @override
-  _OrdenhaFormState createState() => _OrdenhaFormState();
+  _InseminacaoFormState createState() => _InseminacaoFormState();
 }
 
-class _OrdenhaFormState extends State<OrdenhaForm> {
+class _InseminacaoFormState extends State<InseminacaoForm> {
   final _bovino_idController = TextEditingController();
-  final _leiteController = TextEditingController();
-  final _descarteController = TextEditingController();
-  final _coletaController = TextEditingController();
-  final _nomeFocus = FocusNode();
-
-  final _formOrdenha = GlobalKey<FormState>();
+  final _raca_idController = TextEditingController();
+  final _dataController = TextEditingController();
+  final _formInseminacao = GlobalKey<FormState>();
   final formatoData = new DateFormat("yyyy-MM-dd");
 
   Api api = new Api();
-  Ordenha _editedOrdenha;
-  Bovino _editedBovino;
+  Inseminacao _editedInseminacao;
   bool _userEdited = false;
   String _mySelection;
   String dataSelecionada = '';
@@ -51,16 +47,14 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
     super.initState();
     _getAllBovinos();
     isLoading = true;
-    if (widget.ordenha == null) {
-      _editedOrdenha = Ordenha();
-      _editedBovino = Bovino();
+    if (widget.inseminacao == null) {
+      _editedInseminacao = Inseminacao();
     } else {
-      _editedOrdenha = Ordenha.fromJson(widget.ordenha.toJson());
-      _bovino_idController.text = _editedOrdenha.bovino_id;
-      _leiteController.text = _editedOrdenha.leite;
-      _descarteController.text = _editedOrdenha.descarte;
-      _coletaController.text = _editedOrdenha.coleta;
-      //_coletaController.text = _editedOrdenha.nomeBovino;
+      _editedInseminacao = Inseminacao.fromJson(widget.inseminacao.toJson());
+      _bovino_idController.text = _editedInseminacao.bovino_id;
+      _raca_idController.text = _editedInseminacao.raca_id;
+      _dataController.text = _editedInseminacao.data;
+      //_dataController.text = _editedInseminacao.nomeBovino;
     }
   }
 
@@ -71,21 +65,21 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.deepOrange,
-            title: Text(_editedOrdenha.nomeBovino ?? 'Novo Registro de Ordenha'),
+            title: Text(_editedInseminacao.nomeBovino ?? 'Novo Registro de Inseminacao'),
             centerTitle: true,
           ),
           floatingActionButton: FloatingActionButton(
               child: Icon(Icons.save),
               backgroundColor: Colors.deepOrange,
               onPressed: () {
-                if (_formOrdenha.currentState.validate()) {
-                  Navigator.pop(context, _editedOrdenha);
+                if (_formInseminacao.currentState.validate()) {
+                  Navigator.pop(context, _editedInseminacao);
                 }
               }),
           body: SingleChildScrollView(
               padding: EdgeInsets.all(10.0),
               child: Form(
-                key: _formOrdenha,
+                key: _formInseminacao,
                 child: Column(
                   children: <Widget>[
                     DropdownButton(
@@ -101,13 +95,13 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                         setState(() {
                           _mySelection = novoValor;
                           //print(_mySelection);
-                          _editedOrdenha.bovino_id = novoValor;
+                          _editedInseminacao.bovino_id = novoValor;
                         });
                       },
                       isExpanded: true,
-                      value: _editedOrdenha.bovino_id,
+                      value: _editedInseminacao.bovino_id,
                       hint: Text(
-                        'Informe qual Vaca foi Ordenhada',
+                        'Informe qual Vaca foi Inseminacaoda',
                         style: TextStyle(color: Colors.deepOrange),
                       ),
                     ),
@@ -115,27 +109,13 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                         decoration: InputDecoration(labelText: "Digite a Quantidade de Leite Produzida"),
                         onChanged: (text) {
                           _userEdited = true;
-                          _editedOrdenha.leite = text;
+                          _editedInseminacao.raca_id = text;
                         },
                         keyboardType: TextInputType.number,
-                        controller: _leiteController,
+                        controller: _raca_idController,
                         validator: (value) {
                           if (value.isEmpty) {
                             return 'É Obrigatório Informar a Quantidade de Leite Produzido';
-                          }
-                          return null;
-                        }),
-                    TextFormField(
-                        decoration: InputDecoration(labelText: "Digite a Quantidade de Leite Descartado"),
-                        onChanged: (text) {
-                          _userEdited = true;
-                          _editedOrdenha.descarte = text;
-                        },
-                        keyboardType: TextInputType.number,
-                        controller: _descarteController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'É Obrigatório Informar a Quantidade de Leite Descartado';
                           }
                           return null;
                         }),
@@ -156,10 +136,10 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                                       fontSize: 16)),
                            onConfirm: (date) {
                             //print(new DateFormat("dd-MM-yyyy").format(date));
-                            _coletaController.text = formatoData.format(date);
+                            _dataController.text = formatoData.format(date);
                             setState(() {
-                              dataSelecionada = _coletaController.text;
-                              _editedOrdenha.coleta = dataSelecionada;
+                              dataSelecionada = _dataController.text;
+                              _editedInseminacao.data = dataSelecionada;
                               //print('dataSelecionada $dataSelecionada');
                             });
                           },
@@ -174,12 +154,12 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                         decoration: InputDecoration(labelText: 'Data informada:'),
                         onChanged: (dataSelecionada) {
                           _userEdited = true;
-                          _editedOrdenha.coleta = dataSelecionada;
+                          _editedInseminacao.data = dataSelecionada;
                         },
-                        controller: _coletaController,
+                        controller: _dataController,
                         validator: (dataSelecionada) {
                           if (dataSelecionada.isEmpty) {
-                            return 'É nescessário selecinar a Data de Coleta do Leite';
+                            return 'É nescessário selecinar a Data de Inseminação';
                           }
                           return null;
                         }),
@@ -191,7 +171,7 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                       textColor: Colors.blueAccent,
                       onPressed: () {
 //                        _getAllBovinos();
-//                        print('tttf'+_editedOrdenha.nomeBovino.toString());
+//                        print('tttf'+_editedInseminacao.nomeBovino.toString());
                       },
                     )
                   ],

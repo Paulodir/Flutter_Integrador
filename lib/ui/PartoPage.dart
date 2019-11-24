@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
-import 'OrdenhaForm.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../helper/ordenha_helper.dart';
+import 'PartoForm.dart';
+import '../helper/parto_helper.dart';
 import '../utils/Dialogs.dart';
 import 'package:flutter_integrador/ui/Menu.dart';
 import '../helper/Api.dart';
 
-class OrdenhaPage extends StatefulWidget {
+class PartoPage extends StatefulWidget {
   final String token;
 
-  OrdenhaPage(this.token);
+  PartoPage(this.token);
 
   @override
-  _OrdenhaPageState createState() => _OrdenhaPageState();
+  _PartoPageState createState() => _PartoPageState();
 }
 
-class _OrdenhaPageState extends State<OrdenhaPage> {
+class _PartoPageState extends State<PartoPage> {
   Dialogs dialog = new Dialogs();
   // LoginHelper helperLog = LoginHelper();
-  OrdenhaHelper helper = OrdenhaHelper();
-  List<Ordenha> ordenha = List();
+  PartoHelper helper = PartoHelper();
+  List<Parto> parto = List();
   Api api = new Api();
 
   var isLoading = false;
@@ -28,16 +27,25 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
   void initState() {
     super.initState();
     isLoading = true;
-    _getAllOrdenhas();
+    _getAllPartos();
   }
 
-  _getAllOrdenhas() async {
-    api.ordenhas(widget.token).then((list) {
+  _getAllPartos() async {
+    api.partos(widget.token).then((list) {
       setState(() {
         isLoading = false;
-        ordenha = list;
+        parto = list;
       });
     });
+  }
+  nascido(index){
+    String resposta;
+    if(parto[index].nascido == '1'){
+      resposta= 'Terneiro Nascido Vivo';
+    }else{
+      resposta= 'Terneiro Nascido Morto';
+    }
+    return resposta;
   }
 
   @override
@@ -45,7 +53,7 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
     return Scaffold(
         drawer: Menu(),
         appBar: AppBar(
-          title: Text('Ordenhas Registradas'),
+          title: Text('Partos Registradas'),
           backgroundColor: Colors.deepOrange,
           centerTitle: true,
 //          actions: <Widget>[
@@ -83,46 +91,46 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
                   )
                 : ListView.builder(
                     padding: EdgeInsets.all(10.0),
-                    itemCount: ordenha.length,
+                    itemCount: parto.length,
                     itemBuilder: (context, index) {
-                      return _ordenhaCard(context, index);
+                      return _partoCard(context, index);
                     }),
             onWillPop: () {
               return null;
             }));
   }
 
-  void _showContactPage({Ordenha ordenha}) async {
-    final recOrdenha = await Navigator.push(
+  void _showContactPage({Parto parto}) async {
+    final recParto = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => OrdenhaForm(
-                  ordenha: ordenha,
+            builder: (context) => PartoForm(
+                  parto: parto,
                   token: widget.token,
                 )));
-    if (recOrdenha != null) {
-      if (ordenha != null) {
-        await api.atualizarOrdenha(recOrdenha, widget.token);
+    if (recParto != null) {
+      if (parto != null) {
+        await api.atualizarParto(recParto, widget.token);
         // print(widget.usuario_id);
-        print(recOrdenha);
+        print(recParto);
       } else {
-        await api.cadastroOrdenha(recOrdenha,  widget.token);
+        await api.cadastroParto(recParto,  widget.token);
         //print(widget.usuario_id);
-        print(recOrdenha);
+        print(recParto);
       }
-      _getAllOrdenhas();
+      _getAllPartos();
     }
   }
 
-  Widget _ordenhaCard(BuildContext context, int index) {
+  Widget _partoCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
         child: Padding(
             padding: EdgeInsets.all(10.0),
             child: ListTile(
-              title: Text('Vaca: ' + ordenha[index].nomeBovino),
-              subtitle: Text('Leite Produzido: ' + ordenha[index].leite+' litros'),
-              trailing: Text('Coleta: ' + ordenha[index].coleta),
+              title: Text('Vaca: ' + parto[index].nomeBovino),
+              subtitle: Text('Parto no Dia: ' + parto[index].data),
+              trailing: Text(nascido(index)),
             )),
       ),
       onTap: () {
@@ -151,7 +159,7 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
       ),
       onPressed: () {
         Navigator.pop(context);
-        _showContactPage(ordenha: ordenha[index]);
+        _showContactPage(parto: parto[index]);
       },
     ));
     botoes.add(FlatButton(
@@ -171,9 +179,9 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
         ],
       ),
       onPressed: () {
-        api.deletarOrdenha(ordenha[index].id, widget.token);
+        api.deletarParto(parto[index].id, widget.token);
         setState(() {
-          ordenha.removeAt(index);
+          parto.removeAt(index);
           Navigator.pop(context);
         });
       },

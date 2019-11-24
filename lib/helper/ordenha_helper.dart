@@ -23,8 +23,9 @@ class Ordenha {
   String leite;
   String descarte;
   String coleta;
+  String nomeBovino;
 
-  Ordenha({this.id, this.bovino_id, this.leite, this.descarte, this.coleta});
+  Ordenha({this.id, this.bovino_id, this.leite, this.descarte, this.coleta, this.nomeBovino});
 
   factory Ordenha.fromJson(Map<String, dynamic> json) {
     return Ordenha(
@@ -33,6 +34,7 @@ class Ordenha {
       leite: json['leite'],
       descarte: json['descarte'],
       coleta: json['coleta'],
+      nomeBovino: json['nomeBovino'],
     );
   }
 
@@ -43,11 +45,12 @@ class Ordenha {
     data['leite'] = this.leite;
     data['descarte'] = this.descarte;
     data['coleta'] = this.coleta;
+    data['nomeBovino'] = this.nomeBovino;
     return data;
   }
 
   @override
   String toString() {
-    return "Ordenha(id: $id, bovino_id: $bovino_id, leite: $leite, descarte: $descarte, coleta: $coleta)";
+    return "Ordenha(id: $id, bovino_id: $bovino_id, leite: $leite, descarte: $descarte, coleta: $coleta, nomeBovino: $nomeBovino)";
   }
 }

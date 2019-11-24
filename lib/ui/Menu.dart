@@ -6,6 +6,8 @@ import 'package:flutter_integrador/utils/Dialogs.dart';
 import 'package:flutter_integrador/ui/HomePage.dart';
 import 'package:flutter_integrador/ui/BovinoPage.dart';
 import 'package:flutter_integrador/ui/OrdenhaPage.dart';
+import 'package:flutter_integrador/ui/InseminacaoPage.dart';
+import 'package:flutter_integrador/ui/PartoPage.dart';
 
 class Menu extends StatefulWidget {
   @override
@@ -86,13 +88,19 @@ class _MenuState extends State<Menu> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          OrdenhaPage(tokenLogado, usuarioLogado)));
+                          OrdenhaPage(tokenLogado)));
             },
           ),
           ListTile(
             leading: Image.asset('images/bovino.png'),
             title: Text('Inseminações', style: TextStyle(fontSize: 20)),
-            onTap: () {},
+            onTap: () async {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          InseminacaoPage(tokenLogado)));
+            },
           ),
           ListTile(
             leading: Icon(
@@ -100,8 +108,12 @@ class _MenuState extends State<Menu> {
               color: Colors.deepOrange,
             ),
             title: Text('Partos', style: TextStyle(fontSize: 20)),
-            onTap: () {
-              _getUsuarioLogado();
+            onTap: () async {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          PartoPage(tokenLogado)));
             },
           ),
           ListTile(

@@ -38,7 +38,6 @@ class _BovinoFormState extends State<BovinoForm> {
   List racas = List();
   String dataSelecionada='';
 
-
   void getRacas() {
     Api api = new Api();
     racasGet = api.racas(widget.token);
@@ -132,7 +131,10 @@ class _BovinoFormState extends State<BovinoForm> {
                         }),
                     TextFormField(
                         decoration: InputDecoration(labelText: "Nº do Brinco"),
-
+                        onChanged: (text) {
+                          _userEdited = true;
+                          _editedBovino.brinco = text;
+                        },
                         keyboardType: TextInputType.number,
                         controller: _brincoController,
                         validator: (value) {
@@ -157,10 +159,12 @@ class _BovinoFormState extends State<BovinoForm> {
                                       color: Colors.white,
                                       fontSize: 16)),
                               onConfirm: (date) {
-                                //print(new DateFormat("dd-MM-yyyy").format(date));
-                                dataSelecionada= formatoData.format(date);
-                                _nascimentoController.text=dataSelecionada;
-                                print('Data enviada $date');
+                                _nascimentoController.text=formatoData.format(date);
+                                setState(() {
+                                  dataSelecionada = _nascimentoController.text;
+                                  _editedBovino.nascimento = dataSelecionada;
+                                 // print('dataSelecionada $dataSelecionada');
+                                });
                               },
                               currentTime: DateTime.now(),
                               locale: LocaleType.pt);

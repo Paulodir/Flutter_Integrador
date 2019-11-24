@@ -1,33 +1,32 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../helper/ordenha_helper.dart';
+import '../helper/parto_helper.dart';
 import '../helper/bovino_helper.dart';
 import '../helper/Api.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 
-class OrdenhaForm extends StatefulWidget {
-  final Ordenha ordenha;
+class PartoForm extends StatefulWidget {
+  final Parto parto;
   final token;
 
-  OrdenhaForm({this.ordenha, this.token});
+  PartoForm({this.parto, this.token});
 
   @override
-  _OrdenhaFormState createState() => _OrdenhaFormState();
+  _PartoFormState createState() => _PartoFormState();
 }
 
-class _OrdenhaFormState extends State<OrdenhaForm> {
+class _PartoFormState extends State<PartoForm> {
   final _bovino_idController = TextEditingController();
-  final _leiteController = TextEditingController();
-  final _descarteController = TextEditingController();
-  final _coletaController = TextEditingController();
+  final _nascidoController = TextEditingController();
+  final _dataController = TextEditingController();
   final _nomeFocus = FocusNode();
 
-  final _formOrdenha = GlobalKey<FormState>();
+  final _formParto = GlobalKey<FormState>();
   final formatoData = new DateFormat("yyyy-MM-dd");
 
   Api api = new Api();
-  Ordenha _editedOrdenha;
+  Parto _editedParto;
   Bovino _editedBovino;
   bool _userEdited = false;
   String _mySelection;
@@ -51,16 +50,15 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
     super.initState();
     _getAllBovinos();
     isLoading = true;
-    if (widget.ordenha == null) {
-      _editedOrdenha = Ordenha();
+    if (widget.parto == null) {
+      _editedParto = Parto();
       _editedBovino = Bovino();
     } else {
-      _editedOrdenha = Ordenha.fromJson(widget.ordenha.toJson());
-      _bovino_idController.text = _editedOrdenha.bovino_id;
-      _leiteController.text = _editedOrdenha.leite;
-      _descarteController.text = _editedOrdenha.descarte;
-      _coletaController.text = _editedOrdenha.coleta;
-      //_coletaController.text = _editedOrdenha.nomeBovino;
+      _editedParto = Parto.fromJson(widget.parto.toJson());
+      _bovino_idController.text = _editedParto.bovino_id;
+      _nascidoController.text = _editedParto.data;
+      _dataController.text = _editedParto.data;
+      //_dataController.text = _editedParto.nomeBovino;
     }
   }
 
@@ -71,21 +69,21 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.deepOrange,
-            title: Text(_editedOrdenha.nomeBovino ?? 'Novo Registro de Ordenha'),
+            title: Text(_editedParto.nomeBovino ?? 'Novo Registro de Parto'),
             centerTitle: true,
           ),
           floatingActionButton: FloatingActionButton(
               child: Icon(Icons.save),
               backgroundColor: Colors.deepOrange,
               onPressed: () {
-                if (_formOrdenha.currentState.validate()) {
-                  Navigator.pop(context, _editedOrdenha);
+                if (_formParto.currentState.validate()) {
+                  Navigator.pop(context, _editedParto);
                 }
               }),
           body: SingleChildScrollView(
               padding: EdgeInsets.all(10.0),
               child: Form(
-                key: _formOrdenha,
+                key: _formParto,
                 child: Column(
                   children: <Widget>[
                     DropdownButton(
@@ -101,13 +99,13 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                         setState(() {
                           _mySelection = novoValor;
                           //print(_mySelection);
-                          _editedOrdenha.bovino_id = novoValor;
+                          _editedParto.bovino_id = novoValor;
                         });
                       },
                       isExpanded: true,
-                      value: _editedOrdenha.bovino_id,
+                      value: _editedParto.bovino_id,
                       hint: Text(
-                        'Informe qual Vaca foi Ordenhada',
+                        'Informe qual Vaca foi Partoda',
                         style: TextStyle(color: Colors.deepOrange),
                       ),
                     ),
@@ -115,27 +113,13 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                         decoration: InputDecoration(labelText: "Digite a Quantidade de Leite Produzida"),
                         onChanged: (text) {
                           _userEdited = true;
-                          _editedOrdenha.leite = text;
+                          _editedParto.nascido = text;
                         },
                         keyboardType: TextInputType.number,
-                        controller: _leiteController,
+                        controller: _nascidoController,
                         validator: (value) {
                           if (value.isEmpty) {
                             return 'É Obrigatório Informar a Quantidade de Leite Produzido';
-                          }
-                          return null;
-                        }),
-                    TextFormField(
-                        decoration: InputDecoration(labelText: "Digite a Quantidade de Leite Descartado"),
-                        onChanged: (text) {
-                          _userEdited = true;
-                          _editedOrdenha.descarte = text;
-                        },
-                        keyboardType: TextInputType.number,
-                        controller: _descarteController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'É Obrigatório Informar a Quantidade de Leite Descartado';
                           }
                           return null;
                         }),
@@ -156,10 +140,10 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                                       fontSize: 16)),
                            onConfirm: (date) {
                             //print(new DateFormat("dd-MM-yyyy").format(date));
-                            _coletaController.text = formatoData.format(date);
+                            _dataController.text = formatoData.format(date);
                             setState(() {
-                              dataSelecionada = _coletaController.text;
-                              _editedOrdenha.coleta = dataSelecionada;
+                              dataSelecionada = _dataController.text;
+                              _editedParto.data = dataSelecionada;
                               //print('dataSelecionada $dataSelecionada');
                             });
                           },
@@ -174,9 +158,9 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                         decoration: InputDecoration(labelText: 'Data informada:'),
                         onChanged: (dataSelecionada) {
                           _userEdited = true;
-                          _editedOrdenha.coleta = dataSelecionada;
+                          _editedParto.data = dataSelecionada;
                         },
-                        controller: _coletaController,
+                        controller: _dataController,
                         validator: (dataSelecionada) {
                           if (dataSelecionada.isEmpty) {
                             return 'É nescessário selecinar a Data de Coleta do Leite';
@@ -191,7 +175,7 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                       textColor: Colors.blueAccent,
                       onPressed: () {
 //                        _getAllBovinos();
-//                        print('tttf'+_editedOrdenha.nomeBovino.toString());
+//                        print('tttf'+_editedParto.nomeBovino.toString());
                       },
                     )
                   ],
@@ -199,7 +183,6 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
               )),
         ));
   }
-
   Future<bool> _requestPop() {
     if (_userEdited) {
       showDialog(

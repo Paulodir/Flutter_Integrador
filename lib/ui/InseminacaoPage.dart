@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
-import 'OrdenhaForm.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../helper/ordenha_helper.dart';
+import 'InseminacaoForm.dart';
+import '../helper/inseminacao_helper.dart';
 import '../utils/Dialogs.dart';
 import 'package:flutter_integrador/ui/Menu.dart';
 import '../helper/Api.dart';
 
-class OrdenhaPage extends StatefulWidget {
+class InseminacaoPage extends StatefulWidget {
   final String token;
 
-  OrdenhaPage(this.token);
+  InseminacaoPage(this.token);
 
   @override
-  _OrdenhaPageState createState() => _OrdenhaPageState();
+  _InseminacaoPageState createState() => _InseminacaoPageState();
 }
 
-class _OrdenhaPageState extends State<OrdenhaPage> {
+class _InseminacaoPageState extends State<InseminacaoPage> {
   Dialogs dialog = new Dialogs();
   // LoginHelper helperLog = LoginHelper();
-  OrdenhaHelper helper = OrdenhaHelper();
-  List<Ordenha> ordenha = List();
+  InseminacaoHelper helper = InseminacaoHelper();
+  List<Inseminacao> inseminacao = List();
   Api api = new Api();
 
   var isLoading = false;
@@ -28,14 +27,14 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
   void initState() {
     super.initState();
     isLoading = true;
-    _getAllOrdenhas();
+    _getAllInseminacaos();
   }
 
-  _getAllOrdenhas() async {
-    api.ordenhas(widget.token).then((list) {
+  _getAllInseminacaos() async {
+    api.inseminacoes(widget.token).then((list) {
       setState(() {
         isLoading = false;
-        ordenha = list;
+        inseminacao = list;
       });
     });
   }
@@ -45,7 +44,7 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
     return Scaffold(
         drawer: Menu(),
         appBar: AppBar(
-          title: Text('Ordenhas Registradas'),
+          title: Text('Inseminacaos Registradas'),
           backgroundColor: Colors.deepOrange,
           centerTitle: true,
 //          actions: <Widget>[
@@ -83,46 +82,46 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
                   )
                 : ListView.builder(
                     padding: EdgeInsets.all(10.0),
-                    itemCount: ordenha.length,
+                    itemCount: inseminacao.length,
                     itemBuilder: (context, index) {
-                      return _ordenhaCard(context, index);
+                      return _inseminacaoCard(context, index);
                     }),
             onWillPop: () {
               return null;
             }));
   }
 
-  void _showContactPage({Ordenha ordenha}) async {
-    final recOrdenha = await Navigator.push(
+  void _showContactPage({Inseminacao inseminacao}) async {
+    final recInseminacao = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => OrdenhaForm(
-                  ordenha: ordenha,
+            builder: (context) => InseminacaoForm(
+                  inseminacao: inseminacao,
                   token: widget.token,
                 )));
-    if (recOrdenha != null) {
-      if (ordenha != null) {
-        await api.atualizarOrdenha(recOrdenha, widget.token);
+    if (recInseminacao != null) {
+      if (inseminacao != null) {
+        await api.atualizarInseminacao(recInseminacao, widget.token);
         // print(widget.usuario_id);
-        print(recOrdenha);
+        print(recInseminacao);
       } else {
-        await api.cadastroOrdenha(recOrdenha,  widget.token);
+        await api.cadastroInseminacao(recInseminacao,  widget.token);
         //print(widget.usuario_id);
-        print(recOrdenha);
+        print(recInseminacao);
       }
-      _getAllOrdenhas();
+      _getAllInseminacaos();
     }
   }
 
-  Widget _ordenhaCard(BuildContext context, int index) {
+  Widget _inseminacaoCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
         child: Padding(
             padding: EdgeInsets.all(10.0),
             child: ListTile(
-              title: Text('Vaca: ' + ordenha[index].nomeBovino),
-              subtitle: Text('Leite Produzido: ' + ordenha[index].leite+' litros'),
-              trailing: Text('Coleta: ' + ordenha[index].coleta),
+              title: Text('Vaca: ' + inseminacao[index].nomeBovino),
+              subtitle: Text('Data Inseminação: ' + inseminacao[index].data),
+              trailing: Text('Interupção de Ordenha:\n' + inseminacao[index].secagem),
             )),
       ),
       onTap: () {
@@ -151,7 +150,7 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
       ),
       onPressed: () {
         Navigator.pop(context);
-        _showContactPage(ordenha: ordenha[index]);
+        _showContactPage(inseminacao: inseminacao[index]);
       },
     ));
     botoes.add(FlatButton(
@@ -171,9 +170,9 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
         ],
       ),
       onPressed: () {
-        api.deletarOrdenha(ordenha[index].id, widget.token);
+        api.deletarInseminacao(inseminacao[index].id, widget.token);
         setState(() {
-          ordenha.removeAt(index);
+          inseminacao.removeAt(index);
           Navigator.pop(context);
         });
       },

@@ -30,7 +30,7 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
   Ordenha _editedOrdenha;
   Bovino _editedBovino;
   bool _userEdited = false;
-  String _mySelection;
+  //String _mySelection;
   String dataSelecionada = '';
   List<Bovino> bovinosGet = List();
 
@@ -53,7 +53,6 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
     isLoading = true;
     if (widget.ordenha == null) {
       _editedOrdenha = Ordenha();
-      _editedBovino = Bovino();
     } else {
       _editedOrdenha = Ordenha.fromJson(widget.ordenha.toJson());
       _bovino_idController.text = _editedOrdenha.bovino_id;
@@ -71,7 +70,8 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.deepOrange,
-            title: Text(_editedOrdenha.nomeBovino ?? 'Novo Registro de Ordenha'),
+            title:
+                Text(_editedOrdenha.nomeBovino ?? 'Novo Registro de Ordenha'),
             centerTitle: true,
           ),
           floatingActionButton: FloatingActionButton(
@@ -99,7 +99,7 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                       }).toList(),
                       onChanged: (novoValor) {
                         setState(() {
-                          _mySelection = novoValor;
+                          //_mySelection = novoValor;
                           //print(_mySelection);
                           _editedOrdenha.bovino_id = novoValor;
                         });
@@ -110,9 +110,17 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                         'Informe qual Vaca foi Ordenhada',
                         style: TextStyle(color: Colors.deepOrange),
                       ),
+//                        validator: (value) {
+//                          if (value.isEmpty) {
+//                            return 'É Obrigatório Informar a Quantidade de Leite Produzido';
+//                          }
+//                          return null;
+//                        }
                     ),
                     TextFormField(
-                        decoration: InputDecoration(labelText: "Digite a Quantidade de Leite Produzida"),
+                        decoration: InputDecoration(
+                            labelText:
+                                "Digite a Quantidade de Leite Produzida"),
                         onChanged: (text) {
                           _userEdited = true;
                           _editedOrdenha.leite = text;
@@ -126,7 +134,9 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                           return null;
                         }),
                     TextFormField(
-                        decoration: InputDecoration(labelText: "Digite a Quantidade de Leite Descartado"),
+                        decoration: InputDecoration(
+                            labelText:
+                                "Digite a Quantidade de Leite Descartado"),
                         onChanged: (text) {
                           _userEdited = true;
                           _editedOrdenha.descarte = text;
@@ -153,8 +163,7 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                                       fontWeight: FontWeight.bold),
                                   doneStyle: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 16)),
-                           onConfirm: (date) {
+                                      fontSize: 16)), onConfirm: (date) {
                             //print(new DateFormat("dd-MM-yyyy").format(date));
                             _coletaController.text = formatoData.format(date);
                             setState(() {
@@ -171,7 +180,8 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                           style: TextStyle(color: Colors.deepOrange),
                         )),
                     TextFormField(
-                        decoration: InputDecoration(labelText: 'Data informada:'),
+                        decoration:
+                            InputDecoration(labelText: 'Data informada:'),
                         onChanged: (dataSelecionada) {
                           _userEdited = true;
                           _editedOrdenha.coleta = dataSelecionada;
@@ -179,7 +189,7 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                         controller: _coletaController,
                         validator: (dataSelecionada) {
                           if (dataSelecionada.isEmpty) {
-                            return 'É nescessário selecinar a Data de Coleta do Leite';
+                            return 'É nescessário selecionar a Data de Coleta do Leite';
                           }
                           return null;
                         }),

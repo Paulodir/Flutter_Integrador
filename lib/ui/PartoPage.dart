@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'PartoForm.dart';
+import 'package:flutter_integrador/ui/PartoForm.dart';
 import '../helper/parto_helper.dart';
 import '../utils/Dialogs.dart';
 import 'package:flutter_integrador/ui/Menu.dart';
 import '../helper/Api.dart';
+import 'package:flutter_integrador/utils/Strings.dart';
+import 'package:intl/intl.dart';
 
 class PartoPage extends StatefulWidget {
   final String token;
@@ -14,7 +16,10 @@ class PartoPage extends StatefulWidget {
   _PartoPageState createState() => _PartoPageState();
 }
 
+enum OrderOptions { cadastrar }
+
 class _PartoPageState extends State<PartoPage> {
+  final formatoData = new DateFormat("dd-MM-yyyy");
   Dialogs dialog = new Dialogs();
   // LoginHelper helperLog = LoginHelper();
   PartoHelper helper = PartoHelper();
@@ -38,12 +43,13 @@ class _PartoPageState extends State<PartoPage> {
       });
     });
   }
-  nascido(index){
+
+  nascido(index) {
     String resposta;
-    if(parto[index].nascido == '1'){
-      resposta= 'Terneiro Nascido Vivo';
-    }else{
-      resposta= 'Terneiro Nascido Morto';
+    if (parto[index].nascido == '1') {
+      resposta = vivo;
+    } else if (parto[index].nascido == '2') {
+      resposta = morto;
     }
     return resposta;
   }
@@ -53,33 +59,28 @@ class _PartoPageState extends State<PartoPage> {
     return Scaffold(
         drawer: Menu(),
         appBar: AppBar(
-          title: Text('Partos Registradas'),
+          title: Text('Partos Registrados'),
           backgroundColor: Colors.deepOrange,
           centerTitle: true,
-//          actions: <Widget>[
-//            PopupMenuButton<OrderOptions>(
-//                itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
-//                      const PopupMenuItem<OrderOptions>(
-//                        child: Text('Ordenar de A-Z'),
-//                        value: OrderOptions.orderaz,
-//                      ),
+          actions: <Widget>[
+            PopupMenuButton<OrderOptions>(
+                itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
+                      const PopupMenuItem<OrderOptions>(
+                        child: Text('Registrar Parto'),
+                        value: OrderOptions.cadastrar,
+                      ),
 //                      const PopupMenuItem<OrderOptions>(
 //                        child: Text('Ordenar de Z-A'),
 //                        value: OrderOptions.orderza,
 //                      ),
-//                      const PopupMenuItem<OrderOptions>(
-//                        child: Text('Sair'),
-//                        value: OrderOptions.sair,
-//                      )
-//                    ],
-//                onSelected: _orderList)
-//
-//          ],
+                    ],
+                onSelected: _orderList)
+          ],
         ),
         backgroundColor: Colors.white,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            _showContactPage();
+            _showPartoPage();
           },
           child: Icon(Icons.add),
           backgroundColor: Colors.deepOrangeAccent,
@@ -100,7 +101,7 @@ class _PartoPageState extends State<PartoPage> {
             }));
   }
 
-  void _showContactPage({Parto parto}) async {
+  void _showPartoPage({Parto parto}) async {
     final recParto = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -111,15 +112,29 @@ class _PartoPageState extends State<PartoPage> {
     if (recParto != null) {
       if (parto != null) {
         await api.atualizarParto(recParto, widget.token);
-        // print(widget.usuario_id);
-        print(recParto);
+        //print(widget.usuario_id.toString()3);
+        print('dentro do PartoPage' + recParto.toString());
       } else {
-        await api.cadastroParto(recParto,  widget.token);
+        await api.cadastroParto(recParto, widget.token);
         //print(widget.usuario_id);
-        print(recParto);
+        print('dentro do PartoPage' + recParto.toString());
       }
       _getAllPartos();
     }
+  }
+
+  void _orderList(OrderOptions result, {Parto parto}) async {
+    switch (result) {
+      case OrderOptions.cadastrar:
+        _showPartoPage();
+        break;
+//      case OrderOptions.orderza:
+//        ordenha.sort((a, b) {
+//          return b.coleta.toLowerCase().compareTo(a.coleta.toLowerCase());
+//        });
+//        break;
+    }
+    setState(() {});
   }
 
   Widget _partoCard(BuildContext context, int index) {
@@ -129,8 +144,8 @@ class _PartoPageState extends State<PartoPage> {
             padding: EdgeInsets.all(10.0),
             child: ListTile(
               title: Text('Vaca: ' + parto[index].nomeBovino),
-              subtitle: Text('Parto no Dia: ' + parto[index].data),
-              trailing: Text(nascido(index)),
+              subtitle: Text('Parto no Dia: ' + parto[index].data.toString()),
+              trailing: Text(parto[index].nascido),
             )),
       ),
       onTap: () {
@@ -159,7 +174,7 @@ class _PartoPageState extends State<PartoPage> {
       ),
       onPressed: () {
         Navigator.pop(context);
-        _showContactPage(parto: parto[index]);
+        _showPartoPage(parto: parto[index]);
       },
     ));
     botoes.add(FlatButton(

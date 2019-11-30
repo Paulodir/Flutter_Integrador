@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import '../helper/Databases.dart';
+import 'package:flutter_integrador/utils/Strings.dart';
 
 class PartoHelper {
   static final PartoHelper _instance = PartoHelper.internal();
@@ -41,13 +42,13 @@ class Parto {
     data['id'] = this.id;
     data['bovino_id'] = this.bovino_id;
     data['data'] = this.data;
-    data['nascido'] = this.nascido;
     data['nomeBovino'] = this.nomeBovino;
+    data['nascido'] = this.nascido;
     return data;
   }
 
   @override
   String toString() {
-    return "Parto(id: $id, bovino_id: $bovino_id, data: $data, nascido: $nascido, nomeBovino: $nomeBovino)";
+    return "Parto(id: $id, bovino_id: $bovino_id, data: $data, nomeBovino: $nomeBovino, nascido: $nascido)";
   }
 }

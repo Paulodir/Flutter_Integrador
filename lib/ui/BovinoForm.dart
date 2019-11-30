@@ -11,7 +11,6 @@ class BovinoForm extends StatefulWidget {
   final usuario_id;
   final token;
 
-
   BovinoForm({this.bovino, this.usuario_id, this.raca, this.token});
 
   @override
@@ -26,25 +25,25 @@ class _BovinoFormState extends State<BovinoForm> {
   final _pesoController = TextEditingController();
   final _nomeFocus = FocusNode();
 
-
   final _formBovino = GlobalKey<FormState>();
   final formatoData = new DateFormat("yyyy-MM-dd");
+
+  Api api = new Api();
 
   Bovino _editedBovino;
   Raca _editedRaca;
   bool _userEdited = false;
-  String _mySelection;
-  Future<List> racasGet;
-  List racas = List();
-  String dataSelecionada='';
+  //String _mySelection;
+  String dataSelecionada = '';
+  List<Raca> racasGet = List();
+  var isLoading = false;
 
-  void getRacas() {
-    Api api = new Api();
-    racasGet = api.racas(widget.token);
-    racasGet.then((values) {
+  _getAllRacas() async {
+    api.racas(widget.token).then((list) {
       setState(() {
-        racas = values;
-        print(racas);
+        isLoading = false;
+        racasGet = list;
+//        print('_getAllRacas'+widget.token.toString());
       });
     });
   }
@@ -52,7 +51,8 @@ class _BovinoFormState extends State<BovinoForm> {
   @override
   void initState() {
     super.initState();
-    getRacas();
+    isLoading = true;
+    _getAllRacas();
     if (widget.bovino == null) {
       _editedBovino = Bovino();
       _editedRaca = Raca();
@@ -81,7 +81,6 @@ class _BovinoFormState extends State<BovinoForm> {
               child: Icon(Icons.save),
               backgroundColor: Colors.deepOrange,
               onPressed: () {
-
                 if (_formBovino.currentState.validate()) {
                   Navigator.pop(context, _editedBovino);
                 }
@@ -93,17 +92,17 @@ class _BovinoFormState extends State<BovinoForm> {
                 child: Column(
                   children: <Widget>[
                     DropdownButton(
-                      items: racas.map((item) {
+                      items: racasGet.map((item) {
                         // print('dentro do dropdwon');
                         //print(racas);
                         return new DropdownMenuItem(
-                          child: new Text(item['nome']),
-                          value: item['id'].toString(),
+                          child: new Text(item.nome),
+                          value: item.id.toString(),
                         );
                       }).toList(),
                       onChanged: (novoValor) {
                         setState(() {
-                          _mySelection = novoValor;
+                          //_mySelection = novoValor;
                           //print(_mySelection);
                           _editedBovino.raca_id = novoValor;
                         });
@@ -119,9 +118,9 @@ class _BovinoFormState extends State<BovinoForm> {
                         decoration: InputDecoration(labelText: "Nome"),
                         focusNode: _nomeFocus,
                         onChanged: (text) {
-                      _userEdited = true;
-                      _editedBovino.nome = text;
-                    },
+                          _userEdited = true;
+                          _editedBovino.nome = text;
+                        },
                         controller: _nomeController,
                         validator: (value) {
                           if (value.isEmpty) {
@@ -157,15 +156,15 @@ class _BovinoFormState extends State<BovinoForm> {
                                       fontWeight: FontWeight.bold),
                                   doneStyle: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 16)),
-                              onConfirm: (date) {
-                                _nascimentoController.text=formatoData.format(date);
-                                setState(() {
-                                  dataSelecionada = _nascimentoController.text;
-                                  _editedBovino.nascimento = dataSelecionada;
-                                 // print('dataSelecionada $dataSelecionada');
-                                });
-                              },
+                                      fontSize: 16)), onConfirm: (date) {
+                            _nascimentoController.text =
+                                formatoData.format(date);
+                            setState(() {
+                              dataSelecionada = _nascimentoController.text;
+                              _editedBovino.nascimento = dataSelecionada;
+                              // print('dataSelecionada $dataSelecionada');
+                            });
+                          },
                               currentTime: DateTime.now(),
                               locale: LocaleType.pt);
                         },
@@ -174,12 +173,11 @@ class _BovinoFormState extends State<BovinoForm> {
                           style: TextStyle(color: Colors.deepOrange),
                         )),
                     TextFormField(
-                        decoration:
-                            InputDecoration(),
+                        decoration: InputDecoration(),
                         controller: _nascimentoController,
                         validator: (dataSelecionada) {
                           if (dataSelecionada.isEmpty) {
-                            return 'É nescessário selecinar a Data de Nascimento';
+                            return 'É nescessário selecionar a Data de Nascimento';
                           }
                           return null;
                         }),
@@ -189,6 +187,7 @@ class _BovinoFormState extends State<BovinoForm> {
                           _userEdited = true;
                           _editedBovino.peso = text;
                         },
+                        keyboardType: TextInputType.number,
                         controller: _pesoController,
                         validator: (value) {
                           if (value.isEmpty) {

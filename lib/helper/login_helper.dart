@@ -39,6 +39,7 @@ class LoginHelper {
       return null;
     }
   }
+
   Future<String> getLogadoNome() async {
     Database dbLogado = await databases.db;
     List<Map> maps = await dbLogado.rawQuery("SELECT * FROM $logadoTable");

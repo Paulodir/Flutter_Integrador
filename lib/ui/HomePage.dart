@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_integrador/ui/Menu.dart';
 
-
-
 class HomePage extends StatefulWidget {
   final String token;
   final int usuario_id;
@@ -14,15 +12,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  String _date = "Not set";
+  String _date = "Data Não Selecionada";
   //String _time = "Not set";
 
   @override
   void initState() {
     super.initState();
-
-
   }
 
   @override
@@ -30,7 +25,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       drawer: Menu(),
       appBar: AppBar(
-        title: Text('DateTime Picker'),
+        title: Text('Isso Vai Mudar'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -51,10 +46,10 @@ class _HomePageState extends State<HomePage> {
                       showTitleActions: true,
                       minTime: DateTime(2000, 1, 1),
                       maxTime: DateTime(2022, 12, 31), onConfirm: (date) {
-                        print('confirm $date');
-                        _date = '${date.year} - ${date.month} - ${date.day}';
-                        setState(() {});
-                      }, currentTime: DateTime.now(), locale: LocaleType.pt);
+                    print('confirm $date');
+                    _date = '${date.year} - ${date.month} - ${date.day}';
+                    setState(() {});
+                  }, currentTime: DateTime.now(), locale: LocaleType.pt);
                 },
                 child: Container(
                   alignment: Alignment.center,
@@ -85,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                       Text(
-                        "  Change",
+                        "  Escolher Data",
                         style: TextStyle(
                             color: Colors.teal,
                             fontWeight: FontWeight.bold,
@@ -162,12 +157,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
 class CustomPicker extends CommonPickerModel {
   String digits(int value, int length) {
     return '$value'.padLeft(length, "0");
   }
 
-  CustomPicker({DateTime currentTime, LocaleType locale}) : super(locale: locale) {
+  CustomPicker({DateTime currentTime, LocaleType locale})
+      : super(locale: locale) {
     this.currentTime = currentTime ?? DateTime.now();
     this.setLeftIndex(this.currentTime.hour);
     this.setMiddleIndex(this.currentTime.minute);
@@ -219,9 +216,19 @@ class CustomPicker extends CommonPickerModel {
   @override
   DateTime finalTime() {
     return currentTime.isUtc
-        ? DateTime.utc(currentTime.year, currentTime.month, currentTime.day,
-        this.currentLeftIndex(), this.currentMiddleIndex(), this.currentRightIndex())
-        : DateTime(currentTime.year, currentTime.month, currentTime.day, this.currentLeftIndex(),
-        this.currentMiddleIndex(), this.currentRightIndex());
+        ? DateTime.utc(
+            currentTime.year,
+            currentTime.month,
+            currentTime.day,
+            this.currentLeftIndex(),
+            this.currentMiddleIndex(),
+            this.currentRightIndex())
+        : DateTime(
+            currentTime.year,
+            currentTime.month,
+            currentTime.day,
+            this.currentLeftIndex(),
+            this.currentMiddleIndex(),
+            this.currentRightIndex());
   }
 }

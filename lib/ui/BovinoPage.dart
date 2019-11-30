@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'BovinoForm.dart';
 import '../helper/bovino_helper.dart';
-import '../helper/login_helper.dart';
 import '../utils/Dialogs.dart';
 import 'package:flutter_integrador/ui/Menu.dart';
 import '../helper/Api.dart';
@@ -12,16 +11,15 @@ class BovinoPage extends StatefulWidget {
 
   BovinoPage(this.token, this.usuario_id);
 
-
   @override
   _BovinoPageState createState() => _BovinoPageState();
 }
 
-//enum OrderOptions { orderaz, orderza, sair }
+enum OrderOptions { orderaz, orderza }
 
 class _BovinoPageState extends State<BovinoPage> {
   Dialogs dialog = new Dialogs();
- // LoginHelper helperLog = LoginHelper();
+  // LoginHelper helperLog = LoginHelper();
   BovinoHelper helper = BovinoHelper();
   List<Bovino> bovino = List();
   Api api = new Api();
@@ -34,6 +32,7 @@ class _BovinoPageState extends State<BovinoPage> {
     isLoading = true;
     _getAllBovinos();
   }
+
   _getAllBovinos() async {
     api.bovinos(widget.token).then((list) {
       setState(() {
@@ -51,8 +50,25 @@ class _BovinoPageState extends State<BovinoPage> {
           title: Text('Bovinos'),
           backgroundColor: Colors.deepOrange,
           centerTitle: true,
-//          actions: <Widget>[
+          actions: <Widget>[
+            RaisedButton(
+              child: new Row(
+                children: <Widget>[
+                  new Icon(Icons.add),
+                  new Text("Cadastrar"),
+                ],
+              ),
+              color: Colors.deepOrange,
+              textColor: Colors.white,
+              //splashColor: Colors.grey,
+              //padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              onPressed: ({Bovino bovino}) {
+                _showBovinoPage();
+              },
+            ),
 //            PopupMenuButton<OrderOptions>(
+//                padding: EdgeInsets.symmetric(vertical: 25.0),
+//              icon: Icon(Icons.info) ,
 //                itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
 //                      const PopupMenuItem<OrderOptions>(
 //                        child: Text('Ordenar de A-Z'),
@@ -62,23 +78,12 @@ class _BovinoPageState extends State<BovinoPage> {
 //                        child: Text('Ordenar de Z-A'),
 //                        value: OrderOptions.orderza,
 //                      ),
-//                      const PopupMenuItem<OrderOptions>(
-//                        child: Text('Sair'),
-//                        value: OrderOptions.sair,
-//                      )
 //                    ],
-//                onSelected: _orderList)
-//
-//          ],
+//                onSelected: _orderList),
+//            Text("View Account")
+          ],
         ),
-        backgroundColor: Colors.white,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _showContactPage();
-          },
-          child: Icon(Icons.add),
-          backgroundColor: Colors.deepOrangeAccent,
-        ),
+        backgroundColor: Colors.lightGreen,
         body: WillPopScope(
             child: (isLoading)
                 ? Center(
@@ -95,23 +100,23 @@ class _BovinoPageState extends State<BovinoPage> {
             }));
   }
 
-  void _showContactPage({Bovino bovino}) async {
+  void _showBovinoPage({Bovino bovino}) async {
     final recBovino = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => BovinoForm(
                   bovino: bovino,
-              token: widget.token,
+                  token: widget.token,
                 )));
     if (recBovino != null) {
       if (bovino != null) {
         await api.atualizarBovino(recBovino, widget.usuario_id, widget.token);
-       // print(widget.usuario_id);
+        // print(widget.usuario_id);
         print(recBovino);
       } else {
         await api.cadastroBovino(recBovino, widget.usuario_id, widget.token);
         //print(widget.usuario_id);
-       print(recBovino);
+        print(recBovino);
       }
       _getAllBovinos();
     }
@@ -134,27 +139,21 @@ class _BovinoPageState extends State<BovinoPage> {
     );
   }
 
-//  void _orderList(OrderOptions result) async {
-//    switch (result) {
-//      case OrderOptions.orderaz:
-//        bovino.sort((a, b) {
-//          return a.nome.toLowerCase().compareTo(b.nome.toLowerCase());
-//        });
-//        break;
-//      case OrderOptions.orderza:
-//        bovino.sort((a, b) {
-//          return b.nome.toLowerCase().compareTo(a.nome.toLowerCase());
-//        });
-//        break;
-//      case OrderOptions.sair:
-//        await helperLog.deleteLogado();
-//        Navigator.pop(context);
-//        await Navigator.push(
-//            context, MaterialPageRoute(builder: (context) => LoginPage()));
-//        break;
-//    }
-//    setState(() {});
-//  }
+  void _orderList(OrderOptions result) async {
+    switch (result) {
+      case OrderOptions.orderaz:
+        bovino.sort((a, b) {
+          return a.nome.toLowerCase().compareTo(b.nome.toLowerCase());
+        });
+        break;
+      case OrderOptions.orderza:
+        bovino.sort((a, b) {
+          return b.nome.toLowerCase().compareTo(a.nome.toLowerCase());
+        });
+        break;
+    }
+    setState(() {});
+  }
 
   void _showOptions(BuildContext context, int index) {
     List<Widget> botoes = [];
@@ -174,10 +173,9 @@ class _BovinoPageState extends State<BovinoPage> {
               ))
         ],
       ),
-
       onPressed: () {
         Navigator.pop(context);
-        _showContactPage(bovino: bovino[index]);
+        _showBovinoPage(bovino: bovino[index]);
       },
     ));
     botoes.add(FlatButton(
@@ -206,6 +204,4 @@ class _BovinoPageState extends State<BovinoPage> {
     ));
     dialog.showBottomOptions(context, botoes);
   }
-
-
 }

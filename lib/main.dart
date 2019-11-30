@@ -16,9 +16,7 @@ void main() async {
   ]);
   runApp(MaterialApp(
     home: (logado != null) ? HomePage() : LoginPage(),
-
     debugShowCheckedModeBanner: false,
   ));
 }
-
 /*void main() => runApp( MyApp());*/

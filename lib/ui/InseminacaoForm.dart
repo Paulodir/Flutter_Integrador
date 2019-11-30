@@ -26,18 +26,29 @@ class _InseminacaoFormState extends State<InseminacaoForm> {
   Api api = new Api();
   Inseminacao _editedInseminacao;
   bool _userEdited = false;
-  String _mySelection;
   String dataSelecionada = '';
   List<Bovino> bovinosGet = List();
+  List<Raca> racasGet = List();
 
   var isLoading = false;
 
   _getAllBovinos() async {
     api.bovinos(widget.token).then((list) {
       setState(() {
-        isLoading = false;
         bovinosGet = list;
+        isLoading = false;
         //print('_getAllBovinos'+widget.token.toString());
+      });
+    });
+  }
+  // var isLoading = false;
+
+  _getAllRacas() async {
+    api.racas(widget.token).then((list) {
+      setState(() {
+        racasGet = list;
+        isLoading = false;
+        // print('_getAllRacas'+widget.token.toString());
       });
     });
   }
@@ -46,6 +57,7 @@ class _InseminacaoFormState extends State<InseminacaoForm> {
   void initState() {
     super.initState();
     _getAllBovinos();
+    _getAllRacas();
     isLoading = true;
     if (widget.inseminacao == null) {
       _editedInseminacao = Inseminacao();
@@ -65,7 +77,8 @@ class _InseminacaoFormState extends State<InseminacaoForm> {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.deepOrange,
-            title: Text(_editedInseminacao.nomeBovino ?? 'Novo Registro de Inseminacao'),
+            title: Text(_editedInseminacao.nomeBovino ??
+                'Novo Registro de Inseminação'),
             centerTitle: true,
           ),
           floatingActionButton: FloatingActionButton(
@@ -93,7 +106,7 @@ class _InseminacaoFormState extends State<InseminacaoForm> {
                       }).toList(),
                       onChanged: (novoValor) {
                         setState(() {
-                          _mySelection = novoValor;
+                          //_mySelection = novoValor;
                           //print(_mySelection);
                           _editedInseminacao.bovino_id = novoValor;
                         });
@@ -101,24 +114,33 @@ class _InseminacaoFormState extends State<InseminacaoForm> {
                       isExpanded: true,
                       value: _editedInseminacao.bovino_id,
                       hint: Text(
-                        'Informe qual Vaca foi Inseminacaoda',
+                        'Informe qual Vaca foi Inseminada',
                         style: TextStyle(color: Colors.deepOrange),
                       ),
                     ),
-                    TextFormField(
-                        decoration: InputDecoration(labelText: "Digite a Quantidade de Leite Produzida"),
-                        onChanged: (text) {
-                          _userEdited = true;
-                          _editedInseminacao.raca_id = text;
-                        },
-                        keyboardType: TextInputType.number,
-                        controller: _raca_idController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'É Obrigatório Informar a Quantidade de Leite Produzido';
-                          }
-                          return null;
-                        }),
+                    DropdownButton(
+                      items: racasGet.map((item) {
+                        // print('dentro do dropdwon');
+                        //print(racas);
+                        return new DropdownMenuItem(
+                          child: new Text(item.nome),
+                          value: item.id.toString(),
+                        );
+                      }).toList(),
+                      onChanged: (novoValor) {
+                        setState(() {
+                          //_mySelection = novoValor;
+                          //print(_mySelection);
+                          _editedInseminacao.raca_id = novoValor;
+                        });
+                      },
+                      isExpanded: true,
+                      value: _editedInseminacao.raca_id,
+                      hint: Text(
+                        'Selecione a Raça do Sêmen Usuado',
+                        style: TextStyle(color: Colors.deepOrange),
+                      ),
+                    ),
                     FlatButton(
                         onPressed: () {
                           DatePicker.showDatePicker(context,
@@ -133,8 +155,7 @@ class _InseminacaoFormState extends State<InseminacaoForm> {
                                       fontWeight: FontWeight.bold),
                                   doneStyle: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 16)),
-                           onConfirm: (date) {
+                                      fontSize: 16)), onConfirm: (date) {
                             //print(new DateFormat("dd-MM-yyyy").format(date));
                             _dataController.text = formatoData.format(date);
                             setState(() {
@@ -147,11 +168,12 @@ class _InseminacaoFormState extends State<InseminacaoForm> {
                               locale: LocaleType.pt);
                         },
                         child: Text(
-                          'Selecione a Data de Coleta',
+                          'Selecione a Data de Inseminação',
                           style: TextStyle(color: Colors.deepOrange),
                         )),
                     TextFormField(
-                        decoration: InputDecoration(labelText: 'Data informada:'),
+                        decoration:
+                            InputDecoration(labelText: 'Data informada:'),
                         onChanged: (dataSelecionada) {
                           _userEdited = true;
                           _editedInseminacao.data = dataSelecionada;
@@ -159,7 +181,7 @@ class _InseminacaoFormState extends State<InseminacaoForm> {
                         controller: _dataController,
                         validator: (dataSelecionada) {
                           if (dataSelecionada.isEmpty) {
-                            return 'É nescessário selecinar a Data de Inseminação';
+                            return 'É nescessário selecionar a Data de Inseminação';
                           }
                           return null;
                         }),
@@ -171,6 +193,7 @@ class _InseminacaoFormState extends State<InseminacaoForm> {
                       textColor: Colors.blueAccent,
                       onPressed: () {
 //                        _getAllBovinos();
+                        _getAllRacas;
 //                        print('tttf'+_editedInseminacao.nomeBovino.toString());
                       },
                     )

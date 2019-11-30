@@ -44,10 +44,25 @@ class _InseminacaoPageState extends State<InseminacaoPage> {
     return Scaffold(
         drawer: Menu(),
         appBar: AppBar(
-          title: Text('Inseminacaos Registradas'),
+          title: Text('Inseminações'),
           backgroundColor: Colors.deepOrange,
           centerTitle: true,
-//          actions: <Widget>[
+          actions: <Widget>[
+            RaisedButton(
+              child: new Row(
+                children: <Widget>[
+                  new Icon(Icons.add),
+                  new Text("Cadastrar"),
+                ],
+              ),
+              color: Colors.deepOrange,
+              textColor: Colors.white,
+              //splashColor: Colors.grey,
+              //padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              onPressed: ({Inseminacao inseminacao}) {
+                _showInseminacaoPage();
+              },
+            ),
 //            PopupMenuButton<OrderOptions>(
 //                itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
 //                      const PopupMenuItem<OrderOptions>(
@@ -65,16 +80,9 @@ class _InseminacaoPageState extends State<InseminacaoPage> {
 //                    ],
 //                onSelected: _orderList)
 //
-//          ],
+          ],
         ),
         backgroundColor: Colors.white,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _showContactPage();
-          },
-          child: Icon(Icons.add),
-          backgroundColor: Colors.deepOrangeAccent,
-        ),
         body: WillPopScope(
             child: (isLoading)
                 ? Center(
@@ -91,7 +99,7 @@ class _InseminacaoPageState extends State<InseminacaoPage> {
             }));
   }
 
-  void _showContactPage({Inseminacao inseminacao}) async {
+  void _showInseminacaoPage({Inseminacao inseminacao}) async {
     final recInseminacao = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -105,7 +113,7 @@ class _InseminacaoPageState extends State<InseminacaoPage> {
         // print(widget.usuario_id);
         print(recInseminacao);
       } else {
-        await api.cadastroInseminacao(recInseminacao,  widget.token);
+        await api.cadastroInseminacao(recInseminacao, widget.token);
         //print(widget.usuario_id);
         print(recInseminacao);
       }
@@ -121,7 +129,8 @@ class _InseminacaoPageState extends State<InseminacaoPage> {
             child: ListTile(
               title: Text('Vaca: ' + inseminacao[index].nomeBovino),
               subtitle: Text('Data Inseminação: ' + inseminacao[index].data),
-              trailing: Text('Interupção de Ordenha:\n' + inseminacao[index].secagem),
+              trailing:
+                  Text('Interupção de Ordenha:\n' + inseminacao[index].secagem),
             )),
       ),
       onTap: () {
@@ -150,7 +159,7 @@ class _InseminacaoPageState extends State<InseminacaoPage> {
       ),
       onPressed: () {
         Navigator.pop(context);
-        _showContactPage(inseminacao: inseminacao[index]);
+        _showInseminacaoPage(inseminacao: inseminacao[index]);
       },
     ));
     botoes.add(FlatButton(

@@ -25,7 +25,13 @@ class Ordenha {
   String coleta;
   String nomeBovino;
 
-  Ordenha({this.id, this.bovino_id, this.leite, this.descarte, this.coleta, this.nomeBovino});
+  Ordenha(
+      {this.id,
+      this.bovino_id,
+      this.leite,
+      this.descarte,
+      this.coleta,
+      this.nomeBovino});
 
   factory Ordenha.fromJson(Map<String, dynamic> json) {
     return Ordenha(

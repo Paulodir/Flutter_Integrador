@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import '../helper/Databases.dart';
 
-
 class InseminacaoHelper {
   static final InseminacaoHelper _instance = InseminacaoHelper.internal();
   factory InseminacaoHelper() => _instance;
@@ -25,7 +24,15 @@ class Inseminacao {
   String previsao;
   String nomeBovino;
 
-  Inseminacao({this.id, this.bovino_id, this.raca_id, this.data, this.secagem,this.pre_parto,this.previsao, this.nomeBovino});
+  Inseminacao(
+      {this.id,
+      this.bovino_id,
+      this.raca_id,
+      this.data,
+      this.secagem,
+      this.pre_parto,
+      this.previsao,
+      this.nomeBovino});
 
   factory Inseminacao.fromJson(Map<String, dynamic> json) {
     return Inseminacao(

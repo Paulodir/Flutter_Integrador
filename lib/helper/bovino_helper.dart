@@ -16,10 +16,10 @@ class BovinoHelper {
     dbBovino.close();
   }
 }
-class Raca{
+
+class Raca {
   dynamic id;
   String nome;
-
 
   Raca({this.id, this.nome});
 
@@ -41,8 +41,8 @@ class Raca{
   String toString() {
     return "Raca(id: $id, nome: $nome)";
   }
-
 }
+
 class Bovino {
   dynamic id;
   String raca_id;
@@ -52,7 +52,14 @@ class Bovino {
   String peso;
   dynamic usuario_id;
 
-  Bovino({this.id, this.raca_id, this.brinco, this.nome, this.nascimento, this.peso, this.usuario_id});
+  Bovino(
+      {this.id,
+      this.raca_id,
+      this.brinco,
+      this.nome,
+      this.nascimento,
+      this.peso,
+      this.usuario_id});
 
   factory Bovino.fromJson(Map<String, dynamic> json) {
     return Bovino(

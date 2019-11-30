@@ -15,6 +15,8 @@ class OrdenhaPage extends StatefulWidget {
   _OrdenhaPageState createState() => _OrdenhaPageState();
 }
 
+enum OrderOptions { cadastrar }
+
 class _OrdenhaPageState extends State<OrdenhaPage> {
   Dialogs dialog = new Dialogs();
   // LoginHelper helperLog = LoginHelper();
@@ -48,34 +50,22 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
           title: Text('Ordenhas Registradas'),
           backgroundColor: Colors.deepOrange,
           centerTitle: true,
-//          actions: <Widget>[
-//            PopupMenuButton<OrderOptions>(
-//                itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
-//                      const PopupMenuItem<OrderOptions>(
-//                        child: Text('Ordenar de A-Z'),
-//                        value: OrderOptions.orderaz,
-//                      ),
+          actions: <Widget>[
+            PopupMenuButton<OrderOptions>(
+                itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
+                      const PopupMenuItem<OrderOptions>(
+                        child: Text('Cadastrar Ordenha'),
+                        value: OrderOptions.cadastrar,
+                      ),
 //                      const PopupMenuItem<OrderOptions>(
 //                        child: Text('Ordenar de Z-A'),
 //                        value: OrderOptions.orderza,
 //                      ),
-//                      const PopupMenuItem<OrderOptions>(
-//                        child: Text('Sair'),
-//                        value: OrderOptions.sair,
-//                      )
-//                    ],
-//                onSelected: _orderList)
-//
-//          ],
+                    ],
+                onSelected: _orderList)
+          ],
         ),
         backgroundColor: Colors.white,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _showContactPage();
-          },
-          child: Icon(Icons.add),
-          backgroundColor: Colors.deepOrangeAccent,
-        ),
         body: WillPopScope(
             child: (isLoading)
                 ? Center(
@@ -92,7 +82,7 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
             }));
   }
 
-  void _showContactPage({Ordenha ordenha}) async {
+  void _showOrdenhaPage({Ordenha ordenha}) async {
     final recOrdenha = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -106,12 +96,26 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
         // print(widget.usuario_id);
         print(recOrdenha);
       } else {
-        await api.cadastroOrdenha(recOrdenha,  widget.token);
+        await api.cadastroOrdenha(recOrdenha, widget.token);
         //print(widget.usuario_id);
         print(recOrdenha);
       }
       _getAllOrdenhas();
     }
+  }
+
+  void _orderList(OrderOptions result, {Ordenha ordenha}) async {
+    switch (result) {
+      case OrderOptions.cadastrar:
+        _showOrdenhaPage();
+        break;
+//      case OrderOptions.orderza:
+//        ordenha.sort((a, b) {
+//          return b.coleta.toLowerCase().compareTo(a.coleta.toLowerCase());
+//        });
+//        break;
+    }
+    setState(() {});
   }
 
   Widget _ordenhaCard(BuildContext context, int index) {
@@ -121,7 +125,8 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
             padding: EdgeInsets.all(10.0),
             child: ListTile(
               title: Text('Vaca: ' + ordenha[index].nomeBovino),
-              subtitle: Text('Leite Produzido: ' + ordenha[index].leite+' litros'),
+              subtitle:
+                  Text('Leite Produzido: ' + ordenha[index].leite + ' litros'),
               trailing: Text('Coleta: ' + ordenha[index].coleta),
             )),
       ),
@@ -151,7 +156,7 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
       ),
       onPressed: () {
         Navigator.pop(context);
-        _showContactPage(ordenha: ordenha[index]);
+        _showOrdenhaPage(ordenha: ordenha[index]);
       },
     ));
     botoes.add(FlatButton(

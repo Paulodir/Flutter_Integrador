@@ -73,7 +73,7 @@ class _MenuState extends State<Menu> {
             leading: Image.asset('images/bovino.png'),
             title: Text('Bovinos', style: TextStyle(fontSize: 20)),
             onTap: () async {
-                  Navigator.pushReplacement(
+              Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
@@ -87,8 +87,7 @@ class _MenuState extends State<Menu> {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          OrdenhaPage(tokenLogado)));
+                      builder: (context) => OrdenhaPage(tokenLogado)));
             },
           ),
           ListTile(
@@ -98,8 +97,7 @@ class _MenuState extends State<Menu> {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          InseminacaoPage(tokenLogado)));
+                      builder: (context) => InseminacaoPage(tokenLogado)));
             },
           ),
           ListTile(
@@ -112,8 +110,7 @@ class _MenuState extends State<Menu> {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          PartoPage(tokenLogado)));
+                      builder: (context) => PartoPage(tokenLogado)));
             },
           ),
           ListTile(

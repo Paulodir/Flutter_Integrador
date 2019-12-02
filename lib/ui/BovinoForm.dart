@@ -4,6 +4,9 @@ import '../helper/bovino_helper.dart';
 import '../helper/Api.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
+
+
 
 class BovinoForm extends StatefulWidget {
   final Bovino bovino;
@@ -27,6 +30,7 @@ class _BovinoFormState extends State<BovinoForm> {
 
   final _formBovino = GlobalKey<FormState>();
   final formatoData = new DateFormat("yyyy-MM-dd");
+
 
   Api api = new Api();
 
@@ -62,7 +66,7 @@ class _BovinoFormState extends State<BovinoForm> {
       _brincoController.text = _editedBovino.brinco;
       _nomeController.text = _editedBovino.nome;
       _nascimentoController.text = _editedBovino.nascimento;
-      _pesoController.text = _editedBovino.peso;
+      _pesoController.text = _editedBovino.peso.replaceAll('.', ',');
       _editedBovino.usuario_id = widget.usuario_id;
     }
   }
@@ -135,6 +139,7 @@ class _BovinoFormState extends State<BovinoForm> {
                           _editedBovino.brinco = text;
                         },
                         keyboardType: TextInputType.number,
+                        inputFormatters: [WhitelistingTextInputFormatter(new RegExp('[0-9]'))],
                         controller: _brincoController,
                         validator: (value) {
                           if (value.isEmpty) {
@@ -188,6 +193,8 @@ class _BovinoFormState extends State<BovinoForm> {
                           _editedBovino.peso = text;
                         },
                         keyboardType: TextInputType.number,
+                        //keyboardType: TextInputType.numberWithOptions(decimal: true),
+                        inputFormatters: [WhitelistingTextInputFormatter(new RegExp('[0-9\\,]'))],
                         controller: _pesoController,
                         validator: (value) {
                           if (value.isEmpty) {
@@ -247,3 +254,4 @@ class _BovinoFormState extends State<BovinoForm> {
     }
   }
 }
+

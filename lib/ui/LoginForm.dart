@@ -19,6 +19,7 @@ class _LoginFormState extends State<LoginForm> {
   final _senhaController = TextEditingController();
   final _nomeFocus = FocusNode();
   final _formCadastro = GlobalKey<FormState>();
+  String valida='';
 
   @override
   Widget build(BuildContext context) {
@@ -93,12 +94,17 @@ class _LoginFormState extends State<LoginForm> {
                           ),
                           focusNode: _nomeFocus,
                           controller: _nomeController,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'É Obrigatório Informar Seu Nome!';
-                            }
-                            return null;
-                          }),
+                          ),
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 4, right: 32),
+                        child: Text(
+                          valida,
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
                     ),
                     Spacer(),
                     Container(
@@ -131,6 +137,16 @@ class _LoginFormState extends State<LoginForm> {
                               }*/
                       ),
                     ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 4, right: 32),
+                        child: Text(
+                          valida,
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ),
                     Container(
                       width: MediaQuery.of(context).size.width / 1.2,
                       height: 45,
@@ -155,6 +171,16 @@ class _LoginFormState extends State<LoginForm> {
                         keyboardType: TextInputType.visiblePassword,
                         controller: _senhaController,
                         obscureText: true,
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 4, right: 32),
+                        child: Text(
+                          valida,
+                          style: TextStyle(color: Colors.red),
+                        ),
                       ),
                     ),
                     Spacer(),
@@ -184,11 +210,15 @@ class _LoginFormState extends State<LoginForm> {
                           ],
                         ),
                         onTap: () async {
-                          if (_formCadastro.currentState.validate()) {
+                          if (_nomeController.text.isEmpty ||_emailController.text.isEmpty ||_senhaController.text.isEmpty ) {
+                            setState(() {
+                              valida= 'Campo Obrigatório!';
+                            });
+                          }else{
                             if (await api.cadastro(
-                                    _nomeController.text,
-                                    _emailController.text,
-                                    _senhaController.text) !=
+                                _nomeController.text,
+                                _emailController.text,
+                                _senhaController.text) !=
                                 null) {
                               Login user = await api.login(
                                   _emailController.text, _senhaController.text);

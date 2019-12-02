@@ -8,6 +8,8 @@ import 'package:flutter_integrador/ui/BovinoPage.dart';
 import 'package:flutter_integrador/ui/OrdenhaPage.dart';
 import 'package:flutter_integrador/ui/InseminacaoPage.dart';
 import 'package:flutter_integrador/ui/PartoPage.dart';
+import 'package:flutter_integrador/ui/RacaoPage.dart';
+import 'package:flutter_integrador/ui/InseminaPartosPage.dart';
 
 class Menu extends StatefulWidget {
   @override
@@ -19,16 +21,22 @@ class _MenuState extends State<Menu> {
 //  List<Login> login = List();
   Dialogs dialog = new Dialogs();
   Api api = new Api();
+  String atual='';
 
-  String _nomeLogado;
+  String nomeLogado;
   String tokenLogado;
   int usuarioLogado;
 
+
   void _getUsuarioLogado() async {
-    _nomeLogado = await helper.getLogadoNome();
+    nomeLogado = await helper.getLogadoNome();
     tokenLogado = await helper.getLogado();
     usuarioLogado = await helper.getLogadoid();
-    print('nome do usuario $_nomeLogado');
+    print('nome do usuario $nomeLogado');
+    setState(() {
+      atual=nomeLogado;
+    });
+
   }
 
   @override
@@ -45,7 +53,7 @@ class _MenuState extends State<Menu> {
         children: <Widget>[
           UserAccountsDrawerHeader(
             accountName: Text(
-              "Produtor $_nomeLogado",
+              "Produtor $atual",
               style: TextStyle(fontSize: 22, color: Colors.black),
             ),
             decoration: BoxDecoration(
@@ -57,15 +65,22 @@ class _MenuState extends State<Menu> {
             ),
           ),
           ListTile(
-            title: Text('Resumo Leiteiro', style: TextStyle(fontSize: 20)),
-            leading: Icon(
-              Icons.insert_chart,
-              color: Colors.deepOrange,
-            ),
+            title: Text('Resumo do Rebanho', style: TextStyle(fontSize: 20)),
+            leading:Image.asset('images/home.png'),
             onTap: () async {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => HomePage()),
+                MaterialPageRoute(builder: (context) => HomePage(tokenLogado)),
+              );
+            },
+          ),
+          ListTile(
+            title: Text('Recomendação Ração', style: TextStyle(fontSize: 20)),
+            leading: Image.asset('images/cow.png'),
+            onTap: () async {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => RacaoPage(tokenLogado)),
               );
             },
           ),
@@ -81,8 +96,8 @@ class _MenuState extends State<Menu> {
             },
           ),
           ListTile(
-            title: Text('Ordenha', style: TextStyle(fontSize: 20)),
-            leading: Image.asset('images/bovino.png'),
+            title: Text('Registro de Ordenhas', style: TextStyle(fontSize: 20)),
+            leading: Image.asset('images/milk.png'),
             onTap: () async {
               Navigator.pushReplacement(
                   context,
@@ -91,8 +106,8 @@ class _MenuState extends State<Menu> {
             },
           ),
           ListTile(
-            leading: Image.asset('images/bovino.png'),
-            title: Text('Inseminações', style: TextStyle(fontSize: 20)),
+            leading: Image.asset('images/syringe.png'),
+            title: Text('Registro Inseminações', style: TextStyle(fontSize: 20)),
             onTap: () async {
               Navigator.pushReplacement(
                   context,
@@ -101,16 +116,23 @@ class _MenuState extends State<Menu> {
             },
           ),
           ListTile(
-            leading: Icon(
-              Icons.local_parking,
-              color: Colors.deepOrange,
-            ),
+            leading: Image.asset('images/bezerro.png'),
             title: Text('Partos', style: TextStyle(fontSize: 20)),
             onTap: () async {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                       builder: (context) => PartoPage(tokenLogado)));
+            },
+          ),
+          ListTile(
+            title: Text('Detalhamento Partos', style: TextStyle(fontSize: 20)),
+            leading: Image.asset('images/detalhes.png'),
+            onTap: () async {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => InseminaPartosPage(tokenLogado)),
+              );
             },
           ),
           ListTile(

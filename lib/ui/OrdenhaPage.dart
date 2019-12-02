@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'OrdenhaForm.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../helper/ordenha_helper.dart';
 import '../utils/Dialogs.dart';
 import 'package:flutter_integrador/ui/Menu.dart';
 import '../helper/Api.dart';
+
 
 class OrdenhaPage extends StatefulWidget {
   final String token;
@@ -15,7 +15,7 @@ class OrdenhaPage extends StatefulWidget {
   _OrdenhaPageState createState() => _OrdenhaPageState();
 }
 
-enum OrderOptions { cadastrar }
+enum OrderOptions {cadastrar}
 
 class _OrdenhaPageState extends State<OrdenhaPage> {
   Dialogs dialog = new Dialogs();
@@ -52,20 +52,21 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
           centerTitle: true,
           actions: <Widget>[
             PopupMenuButton<OrderOptions>(
+                child: Icon(Icons.add),
                 itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
                       const PopupMenuItem<OrderOptions>(
-                        child: Text('Cadastrar Ordenha'),
+                        child: Text('Registrar Ordenha'),
                         value: OrderOptions.cadastrar,
                       ),
 //                      const PopupMenuItem<OrderOptions>(
-//                        child: Text('Ordenar de Z-A'),
-//                        value: OrderOptions.orderza,
+//                        child: Text('Filtrar Por Período'),
+//                        value: OrderOptions.filtrar,
 //                      ),
                     ],
                 onSelected: _orderList)
           ],
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.lightGreen,
         body: WillPopScope(
             child: (isLoading)
                 ? Center(
@@ -109,10 +110,8 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
       case OrderOptions.cadastrar:
         _showOrdenhaPage();
         break;
-//      case OrderOptions.orderza:
-//        ordenha.sort((a, b) {
-//          return b.coleta.toLowerCase().compareTo(a.coleta.toLowerCase());
-//        });
+//      case OrderOptions.filtrar:
+//        _showFiltro(context);
 //        break;
     }
     setState(() {});
@@ -122,13 +121,21 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
     return GestureDetector(
       child: Card(
         child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: ListTile(
-              title: Text('Vaca: ' + ordenha[index].nomeBovino),
-              subtitle:
-                  Text('Leite Produzido: ' + ordenha[index].leite + ' litros'),
-              trailing: Text('Coleta: ' + ordenha[index].coleta),
-            )),
+            padding: EdgeInsets.all(0.0),
+            child:  Column(
+              children: <Widget>[
+                ListTile(
+                  title: Text('Vaca: ' + ordenha[index].nomeBovino),
+                 trailing: Text('Coleta no Dia:\n' + ordenha[index].coleta),
+                ),
+                ListTile(
+                  title: Text('Leite Ordenhado:\n' + ordenha[index].leite.replaceAll('.', ',')+' lt'),
+                  trailing: Text('Leite Descartado:\n' + ordenha[index].descarte.replaceAll('.', ',')+' lt'),
+                ),
+              ],
+            ),
+
+        ),
       ),
       onTap: () {
         _showOptions(context, index);
@@ -185,4 +192,46 @@ class _OrdenhaPageState extends State<OrdenhaPage> {
     ));
     dialog.showBottomOptions(context, botoes);
   }
+//  void _showFiltro(BuildContext context) {
+//    Container(
+//      child: FormBuilder(
+//        // context,
+//        key: _formParto,
+//        autovalidate: true,
+//        // readonly: true,
+//        child: Column(
+//          children: <Widget>[
+//            FormBuilderDateTimePicker(
+//                inputType: InputType.date,
+//                format: DateFormat("dd-MM-yyyy"),
+//                validators: [FormBuilderValidators.required()],
+//                decoration: InputDecoration(
+//                  labelText: "Selecione uma Data Inicial",
+//                  icon: const Icon(Icons.calendar_today),
+//                  hintText: "Selecione Uma Opção",
+//                ),
+//                onChanged: (value) {
+//                  setState(() {
+//                    inicio = value.toString();
+//                  });
+//                }),
+//            FormBuilderDateTimePicker(
+//                inputType: InputType.date,
+//                format: DateFormat("dd-MM-yyyy"),
+//                validators: [FormBuilderValidators.required()],
+//                decoration: InputDecoration(
+//                  labelText: "Selecione uma Data Final",
+//                  icon: const Icon(Icons.calendar_today),
+//                  hintText: "Selecione Uma Opção",
+//                ),
+//                onChanged: (value) {
+//                  setState(() {
+//                    fim = value.toString();
+//                  });
+//                }),
+//          ],
+//        ),
+//      ),
+//    );
+//  }
 }

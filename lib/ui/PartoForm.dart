@@ -51,9 +51,7 @@ class _PartoFormState extends State<PartoForm> {
           d[6] + d[7] + d[8] + d[9] + d[2] + d[3] + d[4] + d[5] + d[0] + d[1];
       dataParto = DateTime.parse(formatada);
     } else {
-      //d[6]+d[7]+d[8]+d[9]+d[2]+d[3]+d[4]+d[5]+d[0]+d[1]
       dataParto = DateTime.now();
-      //_editedParto.data=dataParto.toString();
     }
     return dataParto;
   }
@@ -105,6 +103,7 @@ class _PartoFormState extends State<PartoForm> {
                     children: <Widget>[
                       FormBuilderDateTimePicker(
                           inputType: InputType.date,
+                          locale : const Locale("pt","IT"),
                           initialValue: converteString(),
                           format: DateFormat("dd-MM-yyyy"),
                           validators: [FormBuilderValidators.required()],
@@ -115,8 +114,11 @@ class _PartoFormState extends State<PartoForm> {
                           ),
                           onChanged: (value) {
                             print('mudou data$value');
+                            String d = value.toString();
+                            String formatada =
+                                d[8] + d[9] + d[4] + d[5] + d[6] + d[7] + d[0] + d[1] + d[2] + d[3];
                             setState(() {
-                              _editedParto.data = value.toString();
+                              _editedParto.data=formatada;
                               print('dataSelecionada ' + _editedParto.data);
                             });
                           }),

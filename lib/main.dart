@@ -15,7 +15,7 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
   runApp(MaterialApp(
-    home: (logado != null) ? HomePage() : LoginPage(),
+    home: (logado != null) ? HomePage(logado) : LoginPage(),
     debugShowCheckedModeBanner: false,
   ));
 }

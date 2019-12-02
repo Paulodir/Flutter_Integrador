@@ -14,6 +14,8 @@ class InseminacaoPage extends StatefulWidget {
   _InseminacaoPageState createState() => _InseminacaoPageState();
 }
 
+enum OrderOptions {cadastrar}
+
 class _InseminacaoPageState extends State<InseminacaoPage> {
   Dialogs dialog = new Dialogs();
   // LoginHelper helperLog = LoginHelper();
@@ -48,41 +50,33 @@ class _InseminacaoPageState extends State<InseminacaoPage> {
           backgroundColor: Colors.deepOrange,
           centerTitle: true,
           actions: <Widget>[
-            RaisedButton(
-              child: new Row(
-                children: <Widget>[
-                  new Icon(Icons.add),
-                  new Text("Cadastrar"),
+//            RaisedButton(
+//              child: new Row(
+//                children: <Widget>[
+//                  new Icon(Icons.add),
+//                  new Text("Cadastrar"),
+//                ],
+//              ),
+//              color: Colors.deepOrange,
+//              textColor: Colors.white,
+//              //splashColor: Colors.grey,
+//              //padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+//              onPressed: ({Inseminacao inseminacao}) {
+//                _showInseminacaoPage();
+//              },
+//            ),
+            PopupMenuButton<OrderOptions>(
+                child: Icon(Icons.add),
+                itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
+                  const PopupMenuItem<OrderOptions>(
+                    child: Text('Registrar Inseminação'),
+                    value: OrderOptions.cadastrar,
+                  ),
                 ],
-              ),
-              color: Colors.deepOrange,
-              textColor: Colors.white,
-              //splashColor: Colors.grey,
-              //padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-              onPressed: ({Inseminacao inseminacao}) {
-                _showInseminacaoPage();
-              },
-            ),
-//            PopupMenuButton<OrderOptions>(
-//                itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
-//                      const PopupMenuItem<OrderOptions>(
-//                        child: Text('Ordenar de A-Z'),
-//                        value: OrderOptions.orderaz,
-//                      ),
-//                      const PopupMenuItem<OrderOptions>(
-//                        child: Text('Ordenar de Z-A'),
-//                        value: OrderOptions.orderza,
-//                      ),
-//                      const PopupMenuItem<OrderOptions>(
-//                        child: Text('Sair'),
-//                        value: OrderOptions.sair,
-//                      )
-//                    ],
-//                onSelected: _orderList)
-//
+                onSelected: _orderList)
           ],
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.lightGreen,
         body: WillPopScope(
             child: (isLoading)
                 ? Center(
@@ -121,17 +115,41 @@ class _InseminacaoPageState extends State<InseminacaoPage> {
     }
   }
 
+  void _orderList(OrderOptions result, {Inseminacao inseminacao}) async {
+    switch (result) {
+      case OrderOptions.cadastrar:
+        _showInseminacaoPage();
+        break;
+//      case OrderOptions.orderza:
+//        ordenha.sort((a, b) {
+//          return b.coleta.toLowerCase().compareTo(a.coleta.toLowerCase());
+//        });
+//        break;
+    }
+    setState(() {});
+  }
+
+
   Widget _inseminacaoCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
         child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: ListTile(
-              title: Text('Vaca: ' + inseminacao[index].nomeBovino),
-              subtitle: Text('Data Inseminação: ' + inseminacao[index].data),
-              trailing:
-                  Text('Interupção de Ordenha:\n' + inseminacao[index].secagem),
-            )),
+            padding: EdgeInsets.all(0.0),
+            child: Column(
+              children: <Widget>[
+                ListTile(
+                  title: Text('Vaca: ' + inseminacao[index].nomeBovino),
+                  subtitle: Text('Inseminação no Dia:\n' + inseminacao[index].data),
+                  trailing: Text('Sêmen Raça:\n'+inseminacao[index].nomeRaca),
+                ),
+                ListTile(
+                  leading: Text('Secagem:\n' + inseminacao[index].secagem),
+                  title: Text('Previsão de Parto:\n' + inseminacao[index].previsao),
+                  trailing: Text('Ração Pré Parto:\n' + inseminacao[index].pre_parto),
+                ),
+              ],
+            ),
+        ),
       ),
       onTap: () {
         _showOptions(context, index);

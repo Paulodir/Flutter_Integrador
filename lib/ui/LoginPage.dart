@@ -25,6 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   final _senhaController = TextEditingController();
   final _emaiLFocus = FocusNode();
   final _formLogin = GlobalKey<FormState>();
+  String valida='';
 
   @override
   void initState() {
@@ -111,6 +112,16 @@ class _LoginPageState extends State<LoginPage> {
                               }*/
                           ),
                         ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 4, right: 32),
+                            child: Text(
+                              valida,
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ),
                         Container(
                           width: MediaQuery.of(context).size.width / 1.2,
                           height: 45,
@@ -136,6 +147,16 @@ class _LoginPageState extends State<LoginPage> {
                             keyboardType: TextInputType.visiblePassword,
                             controller: _senhaController,
                             obscureText: true,
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 4, right: 32),
+                            child: Text(
+                              valida,
+                              style: TextStyle(color: Colors.red),
+                            ),
                           ),
                         ),
 
@@ -181,7 +202,12 @@ class _LoginPageState extends State<LoginPage> {
                               ],
                             ),
                             onTap: () async {
-                              if (_formLogin.currentState.validate()) {
+
+                              if(_emailController.text.isEmpty ||_senhaController.text.isEmpty){
+                                setState(() {
+                                  valida= 'Campo Obrigatório';
+                                });
+                              }else{
                                 Login user = await api.login(
                                     _emailController.text,
                                     _senhaController.text);
@@ -193,14 +219,15 @@ class _LoginPageState extends State<LoginPage> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => HomePage(
-                                            //user.token, user.id
-                                            ),
+                                          user.token,
+                                        ),
                                       ));
                                 } else {
                                   dialog.showAlertDialog(
                                       context, 'Aviso', 'Login Inválido');
                                 }
                               }
+
                             }),
                         Spacer(),
                         Align(

@@ -15,7 +15,7 @@ class BovinoPage extends StatefulWidget {
   _BovinoPageState createState() => _BovinoPageState();
 }
 
-enum OrderOptions { orderaz, orderza }
+enum OrderOptions { cadastrar }
 
 class _BovinoPageState extends State<BovinoPage> {
   Dialogs dialog = new Dialogs();
@@ -47,40 +47,35 @@ class _BovinoPageState extends State<BovinoPage> {
     return Scaffold(
         drawer: Menu(),
         appBar: AppBar(
-          title: Text('Bovinos'),
+          title: Text('Rebanho Leiteiro'),
           backgroundColor: Colors.deepOrange,
           centerTitle: true,
           actions: <Widget>[
-            RaisedButton(
-              child: new Row(
-                children: <Widget>[
-                  new Icon(Icons.add),
-                  new Text("Cadastrar"),
+//            RaisedButton(
+//              child: new Row(
+//                children: <Widget>[
+//                  new Icon(Icons.add),
+//                  new Text("Cadastrar"),
+//                ],
+//              ),
+//              color: Colors.deepOrange,
+//              textColor: Colors.white,
+//              //splashColor: Colors.grey,
+//              //padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+//              onPressed: ({Bovino bovino}) {
+//                _showBovinoPage();
+//              },
+//            ),
+            PopupMenuButton<OrderOptions>(
+              child: Icon(Icons.add),
+                //elevation:5,
+                itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
+                  const PopupMenuItem<OrderOptions>(
+                    child: Text('Registrar Bovino'),
+                    value: OrderOptions.cadastrar,
+                  ),
                 ],
-              ),
-              color: Colors.deepOrange,
-              textColor: Colors.white,
-              //splashColor: Colors.grey,
-              //padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-              onPressed: ({Bovino bovino}) {
-                _showBovinoPage();
-              },
-            ),
-//            PopupMenuButton<OrderOptions>(
-//                padding: EdgeInsets.symmetric(vertical: 25.0),
-//              icon: Icon(Icons.info) ,
-//                itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
-//                      const PopupMenuItem<OrderOptions>(
-//                        child: Text('Ordenar de A-Z'),
-//                        value: OrderOptions.orderaz,
-//                      ),
-//                      const PopupMenuItem<OrderOptions>(
-//                        child: Text('Ordenar de Z-A'),
-//                        value: OrderOptions.orderza,
-//                      ),
-//                    ],
-//                onSelected: _orderList),
-//            Text("View Account")
+                onSelected: _orderList),
           ],
         ),
         backgroundColor: Colors.lightGreen,
@@ -127,32 +122,27 @@ class _BovinoPageState extends State<BovinoPage> {
       child: Card(
         child: Padding(
             padding: EdgeInsets.all(10.0),
-            child: ListTile(
-              title: Text('Nome: ' + bovino[index].nome),
-              subtitle: Text('Nº Brinco: ' + bovino[index].brinco),
-              trailing: Text(bovino[index].nascimento),
-            )),
+            child:
+                Column(
+                  children: <Widget>[
+                    ListTile(
+
+                      title: Text('Nome: ' + bovino[index].id),
+                      subtitle: Text('Nº Brinco: ' + bovino[index].brinco),
+                      trailing: Text('Raça:\n' + bovino[index].nomeRaca),
+                    ),
+                    ListTile(
+                      title: Text('Data de Nascimento:\n' + bovino[index].nascimento),
+                      trailing: Text('Peso estimado:\n' +bovino[index].peso.replaceAll('.', ',')+' Kg'),
+                    )
+                  ],
+                )
+        ),
       ),
       onTap: () {
         _showOptions(context, index);
       },
     );
-  }
-
-  void _orderList(OrderOptions result) async {
-    switch (result) {
-      case OrderOptions.orderaz:
-        bovino.sort((a, b) {
-          return a.nome.toLowerCase().compareTo(b.nome.toLowerCase());
-        });
-        break;
-      case OrderOptions.orderza:
-        bovino.sort((a, b) {
-          return b.nome.toLowerCase().compareTo(a.nome.toLowerCase());
-        });
-        break;
-    }
-    setState(() {});
   }
 
   void _showOptions(BuildContext context, int index) {
@@ -204,4 +194,19 @@ class _BovinoPageState extends State<BovinoPage> {
     ));
     dialog.showBottomOptions(context, botoes);
   }
+
+  void _orderList(OrderOptions result, {Bovino bovino}) async {
+    switch (result) {
+      case OrderOptions.cadastrar:
+        _showBovinoPage();
+        break;
+//      case OrderOptions.orderza:
+//        ordenha.sort((a, b) {
+//          return b.coleta.toLowerCase().compareTo(a.coleta.toLowerCase());
+//        });
+//        break;
+    }
+    setState(() {});
+  }
+
 }

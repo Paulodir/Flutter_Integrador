@@ -23,6 +23,7 @@ class Inseminacao {
   String pre_parto;
   String previsao;
   String nomeBovino;
+  String nomeRaca;
 
   Inseminacao(
       {this.id,
@@ -32,7 +33,8 @@ class Inseminacao {
       this.secagem,
       this.pre_parto,
       this.previsao,
-      this.nomeBovino});
+      this.nomeBovino,
+      this.nomeRaca});
 
   factory Inseminacao.fromJson(Map<String, dynamic> json) {
     return Inseminacao(
@@ -44,6 +46,7 @@ class Inseminacao {
       pre_parto: json['pre_parto'],
       previsao: json['previsao'],
       nomeBovino: json['nomeBovino'],
+      nomeRaca:json['nomeRaca'],
     );
   }
 
@@ -57,11 +60,12 @@ class Inseminacao {
     data['pre_parto'] = this.pre_parto;
     data['previsao'] = this.previsao;
     data['nomeBovino'] = this.nomeBovino;
+    data['nomeRaca']= this.nomeRaca;
     return data;
   }
 
   @override
   String toString() {
-    return "Inseminacao(id: $id, bovino_id: $bovino_id, raca_id: $raca_id, data: $data, secagem: $secagem, pre_parto: $pre_parto, previsao: $previsao, nomeBovino: $nomeBovino)";
+    return "Inseminacao(id: $id, bovino_id: $bovino_id, raca_id: $raca_id, data: $data, secagem: $secagem, pre_parto: $pre_parto, previsao: $previsao, nomeBovino: $nomeBovino, nomeRaca: $nomeRaca)";
   }
 }

@@ -64,27 +64,17 @@ class _PartoPageState extends State<PartoPage> {
           centerTitle: true,
           actions: <Widget>[
             PopupMenuButton<OrderOptions>(
+                child: Icon(Icons.add),
                 itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
                       const PopupMenuItem<OrderOptions>(
                         child: Text('Registrar Parto'),
                         value: OrderOptions.cadastrar,
                       ),
-//                      const PopupMenuItem<OrderOptions>(
-//                        child: Text('Ordenar de Z-A'),
-//                        value: OrderOptions.orderza,
-//                      ),
                     ],
                 onSelected: _orderList)
           ],
         ),
-        backgroundColor: Colors.white,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _showPartoPage();
-          },
-          child: Icon(Icons.add),
-          backgroundColor: Colors.deepOrangeAccent,
-        ),
+        backgroundColor: Colors.lightGreen,
         body: WillPopScope(
             child: (isLoading)
                 ? Center(
@@ -141,12 +131,17 @@ class _PartoPageState extends State<PartoPage> {
     return GestureDetector(
       child: Card(
         child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: ListTile(
-              title: Text('Vaca: ' + parto[index].nomeBovino),
-              subtitle: Text('Parto no Dia: ' + parto[index].data.toString()),
-              trailing: Text(parto[index].nascido),
-            )),
+          padding: EdgeInsets.all(10.0),
+          child: Column(
+            children: <Widget>[
+              ListTile(
+                title: Text('Vaca: ' + parto[index].nomeBovino),
+                subtitle: Text('Parto no Dia: ' + parto[index].data, style: TextStyle(color: Colors.black, fontSize: 14.0)),
+                trailing: Text(parto[index].nascido),
+              ),
+            ],
+          ),
+        ),
       ),
       onTap: () {
         _showOptions(context, index);

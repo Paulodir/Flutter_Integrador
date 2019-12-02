@@ -1,29 +1,28 @@
 import 'package:flutter/material.dart';
-import '../helper/home_helper.dart';
+import '../helper/inseminaPartos_helper.dart';
 import '../utils/Dialogs.dart';
 import 'package:flutter_integrador/ui/Menu.dart';
 import '../helper/Api.dart';
 
-class HomePage extends StatefulWidget {
+class InseminaPartosPage extends StatefulWidget {
   final String token;
 
-  HomePage(this.token);
+  InseminaPartosPage(this.token);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _InseminaPartosPageState createState() => _InseminaPartosPageState();
 }
 
-enum OrderOptions {cadastrar}
+enum OrderOptions { cadastrar }
 
-class _HomePageState extends State<HomePage> {
+class _InseminaPartosPageState extends State<InseminaPartosPage> {
   Dialogs dialog = new Dialogs();
-  HomeHelper helper = HomeHelper();
-  List<Home> home = List();
+  InseminaPartosHelper helper = InseminaPartosHelper();
+  List<InseminaPartos> inseminaPartos = List();
   Api api = new Api();
   final corAzul = Colors.blue;
 
   var isLoading = false;
-
 
   @override
   void initState() {
@@ -33,21 +32,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   _getResumo() async {
-    api.resumo(widget.token).then((list) {
+    api.relacao(widget.token).then((list) {
       setState(() {
         isLoading = false;
-        home = list;
+        inseminaPartos = list;
       });
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         drawer: Menu(),
         appBar: AppBar(
-          title: Text('Resumo do Rebanho'),
+          title: Text('Detalhamento de Partos'),
           backgroundColor: Colors.deepOrange,
           centerTitle: true,
 //          actions: <Widget>[
@@ -56,7 +54,7 @@ class _HomePageState extends State<HomePage> {
 //                //elevation:5,
 //                itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
 //                  const PopupMenuItem<OrderOptions>(
-//                    child: Text('Registrar Home'),
+//                    child: Text('Registrar InseminaPartos'),
 //                    value: OrderOptions.cadastrar,
 //                  ),
 //                ],
@@ -67,59 +65,59 @@ class _HomePageState extends State<HomePage> {
         body: WillPopScope(
             child: (isLoading)
                 ? Center(
-              child: CircularProgressIndicator(),
-            )
+                    child: CircularProgressIndicator(),
+                  )
                 : ListView.builder(
-                padding: EdgeInsets.all(10.0),
-                itemCount: home.length,
-                itemBuilder: (context, index) {
-                  return _homeCard(context, index);
-                }),
+                    padding: EdgeInsets.all(10.0),
+                    itemCount: inseminaPartos.length,
+                    itemBuilder: (context, index) {
+                      return _inseminaPartosCard(context, index);
+                    }),
             onWillPop: () {
               return null;
             }));
   }
 
-//  void _showHomePage({Home home}) async {
-//    final recHome = await Navigator.push(
+//  void _showInseminaPartosPage({InseminaPartos inseminaPartos}) async {
+//    final recInseminaPartos = await Navigator.push(
 //        context,
 //        MaterialPageRoute(
-//            builder: (context) => HomeForm(
-//              home: home,
+//            builder: (context) => InseminaPartosForm(
+//              inseminaPartos: inseminaPartos,
 //              token: widget.token,
 //            )));
-//    if (recHome != null) {
-//      if (home != null) {
-//        await api.atualizarHome(recHome, widget.usuario_id, widget.token);
+//    if (recInseminaPartos != null) {
+//      if (inseminaPartos != null) {
+//        await api.atualizarInseminaPartos(recInseminaPartos, widget.usuario_id, widget.token);
 //        // print(widget.usuario_id);
-//        print(recHome);
+//        print(recInseminaPartos);
 //      } else {
-//        await api.cadastroHome(recHome, widget.usuario_id, widget.token);
+//        await api.cadastroInseminaPartos(recInseminaPartos, widget.usuario_id, widget.token);
 //        //print(widget.usuario_id);
-//        print(recHome);
+//        print(recInseminaPartos);
 //      }
 //      _getResumo();
 //    }
 //  }
 
-  Widget _homeCard(BuildContext context, int index) {
+  Widget _inseminaPartosCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
-        color: (
-            (int.parse(home[index].vazia)> 120) ? Colors.red : (int.parse(home[index].vazia)> 90) ? Colors.cyan[600]:Colors.white
-        ),
+//        color: (
+//            (int.parse(inseminaPartos[index].vazia)> 120) ? Colors.red : (int.parse(inseminaPartos[index].vazia)> 90) ? Colors.cyan[600]:Colors.white
+//        ),
         child: Padding(
             padding: EdgeInsets.all(0.0),
             child:  Column(
               children: <Widget>[
                 ListTile(
-                  title: Text('Vaca: ' + home[index].nome),
-                  subtitle: Text('Aguardando Inseminação:\n ' + home[index].vazia+' dias'),
-                  trailing: Text('Vaca Prenha ou Vazia:\n'+home[index].status),
+                  title: Text('Vaca: ' + inseminaPartos[index].nome),
+                  trailing: Text('Total de Inseminações:\n ' + inseminaPartos[index].inseminacoes, style: TextStyle( fontSize: 14.0)),
                 ),
                 ListTile(
-                  title: Text('Última Inseminação:\n' + home[index].ultimaInseminacao),
-                  trailing: Text('Último Parto:\n' +home[index].ultimoParto),
+                  title: Text('Nascimentos: ' + inseminaPartos[index].partos, style: TextStyle(color: Colors.black, fontSize: 14.0)),
+                  subtitle: Text('Abortos: ' + inseminaPartos[index].abortos, style: TextStyle(color: Colors.black, fontSize: 14.0)),
+                  trailing: Text('Total de Partos:'+inseminaPartos[index].total, style: TextStyle(color: Colors.black, fontSize: 14.0)),
                 ),
               ],
             ),
@@ -130,7 +128,6 @@ class _HomePageState extends State<HomePage> {
 //      },
     );
   }
-
 //  void _showOptions(BuildContext context, int index) {
 //    List<Widget> botoes = [];
 //    botoes.add(FlatButton(
@@ -143,7 +140,7 @@ class _HomePageState extends State<HomePage> {
 //                children: <Widget>[
 //                  Text(
 //                    'Atualizar Informações',
-//                    style: TextStyle(color: Colors.deepOrange, fontSize: 15.0),
+//                    style: TextStyle(color: Colors.deepOrange, fontSize: 14.0),
 //                  )
 //                ],
 //              ))
@@ -151,7 +148,7 @@ class _HomePageState extends State<HomePage> {
 //      ),
 //      onPressed: () {
 //        Navigator.pop(context);
-//        _showHomePage(home: home[index]);
+//        _showInseminaPartosPage(inseminaPartos: inseminaPartos[index]);
 //      },
 //    ));
 //    botoes.add(FlatButton(
@@ -164,16 +161,16 @@ class _HomePageState extends State<HomePage> {
 //                children: <Widget>[
 //                  Text(
 //                    'Apagar Registro',
-//                    style: TextStyle(color: Colors.deepOrange, fontSize: 15.0),
+//                    style: TextStyle(color: Colors.deepOrange, fontSize: 14.0),
 //                  )
 //                ],
 //              ))
 //        ],
 //      ),
 //      onPressed: () {
-//        api.deletarHome(home[index].id, widget.token);
+//        api.deletarInseminaPartos(inseminaPartos[index].id, widget.token);
 //        setState(() {
-//          home.removeAt(index);
+//          inseminaPartos.removeAt(index);
 //          Navigator.pop(context);
 //        });
 //      },
@@ -181,10 +178,10 @@ class _HomePageState extends State<HomePage> {
 //    dialog.showBottomOptions(context, botoes);
 //  }
 //
-//  void _orderList(OrderOptions result, {Home home}) async {
+//  void _orderList(OrderOptions result, {InseminaPartos inseminaPartos}) async {
 //    switch (result) {
 //      case OrderOptions.cadastrar:
-//        _showHomePage();
+//        _showInseminaPartosPage();
 //        break;
 ////      case OrderOptions.orderza:
 ////        ordenha.sort((a, b) {
@@ -194,5 +191,4 @@ class _HomePageState extends State<HomePage> {
 //    }
 //    setState(() {});
 //  }
-
 }

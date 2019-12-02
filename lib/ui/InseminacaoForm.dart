@@ -185,18 +185,18 @@ class _InseminacaoFormState extends State<InseminacaoForm> {
                           }
                           return null;
                         }),
-                    RaisedButton(
-                      padding: EdgeInsets.symmetric(vertical: 25.0),
-                      child: Text("Conferir"),
-                      elevation: 3,
-                      color: Colors.white,
-                      textColor: Colors.blueAccent,
-                      onPressed: () {
-//                        _getAllBovinos();
-                        _getAllRacas;
-//                        print('tttf'+_editedInseminacao.nomeBovino.toString());
-                      },
-                    )
+//                    RaisedButton(
+//                      padding: EdgeInsets.symmetric(vertical: 25.0),
+//                      child: Text("Conferir"),
+//                      elevation: 3,
+//                      color: Colors.white,
+//                      textColor: Colors.blueAccent,
+//                      onPressed: () {
+////                        _getAllBovinos();
+//                        _getAllRacas;
+////                        print('tttf'+_editedInseminacao.nomeBovino.toString());
+//                      },
+//                    )
                   ],
                 ),
               )),

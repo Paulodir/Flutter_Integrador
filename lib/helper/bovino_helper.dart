@@ -51,6 +51,7 @@ class Bovino {
   String nascimento;
   String peso;
   dynamic usuario_id;
+  String nomeRaca;
 
   Bovino(
       {this.id,
@@ -59,7 +60,8 @@ class Bovino {
       this.nome,
       this.nascimento,
       this.peso,
-      this.usuario_id});
+      this.usuario_id,
+      this.nomeRaca});
 
   factory Bovino.fromJson(Map<String, dynamic> json) {
     return Bovino(
@@ -70,6 +72,7 @@ class Bovino {
       nascimento: json['nascimento'],
       peso: json['peso'],
       usuario_id: json['usuario_id'],
+      nomeRaca:json['nomeRaca'],
     );
   }
 
@@ -81,11 +84,12 @@ class Bovino {
     data['nome'] = this.nome;
     data['nascimento'] = this.nascimento;
     data['peso'] = this.peso;
+    data['nomeRaca']= this.nomeRaca;
     return data;
   }
 
   @override
   String toString() {
-    return "Bovino(id: $id, raca_id: $raca_id, brinco: $brinco, nome: $nome, nascimento: $nascimento, peso: $peso, usuario_id: $usuario_id)";
+    return "Bovino(id: $id, raca_id: $raca_id, brinco: $brinco, nome: $nome, nascimento: $nascimento, peso: $peso, usuario_id: $usuario_id), nomeRaca: $nomeRaca)";
   }
 }

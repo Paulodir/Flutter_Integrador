@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import '../helper/ordenha_helper.dart';
 import '../helper/bovino_helper.dart';
 import '../helper/Api.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_integrador/utils/Strings.dart';
 
 class OrdenhaForm extends StatefulWidget {
   final Ordenha ordenha;
@@ -23,8 +26,7 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
   final _coletaController = TextEditingController();
   final _nomeFocus = FocusNode();
 
-  final _formOrdenha = GlobalKey<FormState>();
-  final formatoData = new DateFormat("yyyy-MM-dd");
+  final GlobalKey<FormBuilderState> _formOrdenha = GlobalKey<FormBuilderState>();
 
   Api api = new Api();
   Ordenha _editedOrdenha;
@@ -45,6 +47,20 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
       });
     });
   }
+  converteString() {
+    isLoading = false;
+    DateTime dataOrdenha;
+    if (_editedOrdenha.coleta != '') {
+      print('aqui aqui'+_editedOrdenha.coleta);
+      String d = _editedOrdenha.coleta;
+      String formatada =
+          d[6] + d[7] + d[8] + d[9] + d[2] + d[3] + d[4] + d[5] + d[0] + d[1];
+      dataOrdenha = DateTime.parse(formatada);
+    } else {
+      dataOrdenha = DateTime.now();
+    }
+    return dataOrdenha;
+  }
 
   @override
   void initState() {
@@ -53,15 +69,16 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
     isLoading = true;
     if (widget.ordenha == null) {
       _editedOrdenha = Ordenha();
+      _editedOrdenha.coleta = '';
     } else {
       _editedOrdenha = Ordenha.fromJson(widget.ordenha.toJson());
       _bovino_idController.text = _editedOrdenha.bovino_id;
-      _leiteController.text = _editedOrdenha.leite;
-      _descarteController.text = _editedOrdenha.descarte;
+      _leiteController.text = _editedOrdenha.leite.replaceAll('.', ',');
+      _descarteController.text = _editedOrdenha.descarte.replaceAll('.', ',');
       _coletaController.text = _editedOrdenha.coleta;
-      //_coletaController.text = _editedOrdenha.nomeBovino;
     }
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -83,130 +100,102 @@ class _OrdenhaFormState extends State<OrdenhaForm> {
                 }
               }),
           body: SingleChildScrollView(
-              padding: EdgeInsets.all(10.0),
-              child: Form(
-                key: _formOrdenha,
-                child: Column(
-                  children: <Widget>[
-                    DropdownButton(
-                      items: bovinosGet.map((item) {
-                        // print('dentro do dropdwon');
-                        //print(bovinos);
-                        return new DropdownMenuItem(
-                          child: new Text(item.nome),
-                          value: item.id.toString(),
-                        );
-                      }).toList(),
-                      onChanged: (novoValor) {
-                        setState(() {
-                          //_mySelection = novoValor;
-                          //print(_mySelection);
-                          _editedOrdenha.bovino_id = novoValor;
-                        });
-                      },
-                      isExpanded: true,
-                      value: _editedOrdenha.bovino_id,
-                      hint: Text(
-                        'Informe qual Vaca foi Ordenhada',
-                        style: TextStyle(color: Colors.deepOrange),
-                      ),
-//                        validator: (value) {
-//                          if (value.isEmpty) {
-//                            return 'É Obrigatório Informar a Quantidade de Leite Produzido';
-//                          }
-//                          return null;
-//                        }
-                    ),
-                    TextFormField(
+            child: Column(
+              children: <Widget>[
+                FormBuilder(
+                  // context,
+                  key: _formOrdenha,
+                  autovalidate: true,
+                  // readonly: true,
+                  child: Column(
+                    children: <Widget>[
+                      FormBuilderDateTimePicker(
+                          inputType: InputType.date,
+                         // initialValue: converteString(),
+                          format: DateFormat("dd-MM-yyyy"),
+                          validators: [FormBuilderValidators.required()],
+                          decoration: InputDecoration(
+                            labelText: "Selecione a Data do Ordenha ou Aborto",
+                            icon: const Icon(Icons.calendar_today),
+                            hintText: "Selecione Uma Opção",
+                          ),
+                          onChanged: (value) {
+                            print('mudou data$value');
+                            String d = value.toString();
+                            String formatada =
+                                d[8] + d[9] + d[4] + d[5] + d[6] + d[7] + d[0] + d[1] + d[2] + d[3];
+                            setState(() {
+                              _editedOrdenha.coleta=formatada;
+                              print('dataSelecionada ' + _editedOrdenha.coleta);
+                            });
+                          }),
+                      FormBuilderDropdown(
                         decoration: InputDecoration(
-                            labelText:
-                                "Digite a Quantidade de Leite Produzida"),
+                          labelText: "Bovino",
+                          icon: const Icon(Icons.category),
+                          hintText: "Selecione uma Opção",
+                        ),
+                        initialValue: _editedOrdenha.bovino_id,
+                        hint: Text('Informe qual Vaca Foi Ordenhada'),
+                        style: TextStyle(color: Colors.deepOrange),
+                        validators: [FormBuilderValidators.required()],
+                        items: bovinosGet.map((item) {
+                          // print('dentro do dropdwon');
+                          //print(bovinos);
+                          return new DropdownMenuItem(
+                            child: new Text(item.nome),
+                            value: item.id.toString(),
+                          );
+                        }).toList(),
+                        isExpanded: true,
+                        onChanged: (novoValor) {
+                          setState(() {
+                            _editedOrdenha.bovino_id = novoValor;
+                          });
+                        },
+                        //value: ,
+                      ),
+                      FormBuilderTextField(
+                        focusNode: _nomeFocus,
                         onChanged: (text) {
                           _userEdited = true;
                           _editedOrdenha.leite = text;
                         },
-                        keyboardType: TextInputType.number,
-                        controller: _leiteController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'É Obrigatório Informar a Quantidade de Leite Produzido';
-                          }
-                          return null;
-                        }),
-                    TextFormField(
                         decoration: InputDecoration(
-                            labelText:
-                                "Digite a Quantidade de Leite Descartado"),
-                        onChanged: (text) {
-                          _userEdited = true;
-                          _editedOrdenha.descarte = text;
-                        },
+                          labelText: 'Litros de Leite Ordenhado:',
+                          icon: const Icon(Icons.plus_one),
+                          hintText: "Selecione Uma Opção",
+                        ),
                         keyboardType: TextInputType.number,
+                        inputFormatters: [WhitelistingTextInputFormatter(new RegExp('[0-9\\,]'))],
+                        controller: _leiteController,
+                        validators: [
+                          FormBuilderValidators.required(),
+                        ],
+                      ),
+                      FormBuilderTextField(
+                        onChanged: (text) {
+                         _userEdited = true;
+                         _editedOrdenha.descarte = text;
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Litros de Leite Descartado:',
+                          icon: Icon(Icons.plus_one),
+                          hintText: "Selecione Uma Opção",
+                        ),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [WhitelistingTextInputFormatter(new RegExp('[0-9\\,]'))],
                         controller: _descarteController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'É Obrigatório Informar a Quantidade de Leite Descartado';
-                          }
-                          return null;
-                        }),
-                    FlatButton(
-                        onPressed: () {
-                          DatePicker.showDatePicker(context,
-                              showTitleActions: true,
-                              minTime: DateTime(1999, 1, 1),
-                              maxTime: DateTime(2019, 12, 31),
-                              theme: DatePickerTheme(
-                                  backgroundColor: Colors.orange,
-                                  itemStyle: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                  doneStyle: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16)), onConfirm: (date) {
-                            //print(new DateFormat("dd-MM-yyyy").format(date));
-                            _coletaController.text = formatoData.format(date);
-                            setState(() {
-                              dataSelecionada = _coletaController.text;
-                              _editedOrdenha.coleta = dataSelecionada;
-                              //print('dataSelecionada $dataSelecionada');
-                            });
-                          },
-                              currentTime: DateTime.now(),
-                              locale: LocaleType.pt);
-                        },
-                        child: Text(
-                          'Selecione a Data de Coleta',
-                          style: TextStyle(color: Colors.deepOrange),
-                        )),
-                    TextFormField(
-                        decoration:
-                            InputDecoration(labelText: 'Data informada:'),
-                        onChanged: (dataSelecionada) {
-                          _userEdited = true;
-                          _editedOrdenha.coleta = dataSelecionada;
-                        },
-                        controller: _coletaController,
-                        validator: (dataSelecionada) {
-                          if (dataSelecionada.isEmpty) {
-                            return 'É nescessário selecionar a Data de Coleta do Leite';
-                          }
-                          return null;
-                        }),
-                    RaisedButton(
-                      padding: EdgeInsets.symmetric(vertical: 25.0),
-                      child: Text("Conferir"),
-                      elevation: 3,
-                      color: Colors.white,
-                      textColor: Colors.blueAccent,
-                      onPressed: () {
-//                        _getAllBovinos();
-//                        print('tttf'+_editedOrdenha.nomeBovino.toString());
-                      },
-                    )
-                  ],
+                        validators: [
+                          FormBuilderValidators.required(),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              )),
+              ],
+            ),
+          ),
         ));
   }
 
